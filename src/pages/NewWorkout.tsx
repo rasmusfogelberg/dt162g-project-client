@@ -81,28 +81,29 @@ function NewWorkoutPage() {
   }
 
   return (
-    <Form>
-      <Input type="text" name="workout" label="Workout name: " />
-      <Button onClick={(e) => e.preventDefault()} type="submit">
-        Add workout
+    <div>
+      <Form>
+        <Input type="text" name="workout" label="Workout name: " />
+        <Button onClick={(e) => e.preventDefault()} type="submit">
+          Add workout
+        </Button>
+      </Form>
+      {isWorkoutActive &&
+        workouts.map((workout) => {
+          return (
+            <Workout
+              key={`${Math.random()}-${workout.name}`}
+              name={workout.name}
+              exercises={workout.exercises}
+            />
+          );
+        })}
+
+      <Button onClick={() => handleClick()}>
+        {isWorkoutActive ? "Save" : "Start"} Workout
       </Button>
-    </Form>
+    </div>
   );
-  {
-    isWorkoutActive &&
-      workouts.map((workout) => {
-        return (
-          <Workout
-            key={`${Math.random()}-${workout.name}`}
-            name={workout.name}
-            exercises={workout.exercises}
-          />
-        );
-      });
-  }
-  <Button onClick={() => handleClick()}>
-    {isWorkoutActive ? "Save" : "Start"} Workout
-  </Button>;
 }
 
 export default NewWorkoutPage;
