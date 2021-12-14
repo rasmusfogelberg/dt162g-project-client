@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Exercise from "../../components/Exercise/Exercise";
+import DefaultLayout from "../../layouts/DefaultLayout";
 
 function ArchiveItemPage() {
   const { workoutId } = useParams();
@@ -21,7 +22,7 @@ function ArchiveItemPage() {
   }, [workoutId]);
 
   return (
-    <div className="wrapper">
+    <DefaultLayout>
       {workout && (
         <>
           <h2>{workout.name}</h2>
@@ -32,7 +33,7 @@ function ArchiveItemPage() {
           </div>
         </>
       )}
-    </div>
+    </DefaultLayout>
   );
 }
 
