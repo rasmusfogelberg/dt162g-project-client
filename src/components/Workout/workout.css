@@ -1,0 +1,36 @@
+.workoutItemWrapper {
+  background-color: hsl(150, 81%, 21%);
+  border: 2px solid transparent;
+  border-radius: 0.25em;
+  display: inline-flex;
+  flex-direction: column;
+  margin: 0 0 1em;
+  max-width: 500px;
+  transform: translateY(0);
+  transition: all 0.1s ease-in-out;
+  overflow: hidden;
+  padding: 1em;
+}
+
+.workoutItemWrapper:hover {
+  border-color: aqua;
+  transform: scale(1.025);
+  cursor: pointer;
+}
+
+.workoutItemContent {
+  padding: 1em;
+}
+
+.workoutIemName {
+  font-size: 22pt;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.workoutItemDate {
+  opacity: 0.7;
+}
+.exercisesWrapper {}

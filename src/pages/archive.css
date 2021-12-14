@@ -1,0 +1,33 @@
+.moveMeLaterWrapper {
+  margin-top: 5em;
+  min-height: calc(100vh - 6em);
+  padding: 16px;
+}
+
+.workoutsWrapper {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 500px));
+  justify-content: center;
+  max-height: 80vh;
+}
+
+.workoutItem {
+  max-width: 22rem;
+  width: 100%;
+  margin: 1em;
+}
+
+.workoutItem:last-of-type {
+  flex-basis: 100%;
+}
+
+.exercisesWrapper {
+  
+}
+
+@media screen and (max-width: 1026px) {
+  .workoutsWrapper {
+    max-height: 75vh;
+  }
+}

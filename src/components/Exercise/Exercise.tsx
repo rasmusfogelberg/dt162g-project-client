@@ -1,16 +1,26 @@
 import Set from "../Set/Set";
 
-const Exercise: React.FC<any> = ({ name, sets, ...rest }) => {
+interface IExerciseProps {
+  name: string;
+  sets: any[]; // Todo: Type this
+}
+
+const Exercise: React.FC<any> = ({ name, sets }) => {
   return (
-    <li className="exercise">
+    <div className="exercise">
       <h4>{name}</h4>
-      <hr />
-      <h6>Sets</h6>
+      <h5>Sets</h5>
       {sets.map((set: any) => {
-        return (<Set key={`${Math.random()}-${name}`} weight={set.weight} reps={set.reps} />);
+        return (
+          <Set
+            key={`${Math.random()}-${name}`}
+            weight={set.weight}
+            reps={set.reps}
+          />
+        );
       })}
-    </li>
-  )
+    </div>
+  );
 };
 
 export default Exercise;
