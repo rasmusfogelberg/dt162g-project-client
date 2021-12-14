@@ -5,7 +5,7 @@ interface IExerciseProps {
   sets: any[]; // Todo: Type this
 }
 
-const Exercise: React.FC<any> = ({ name, sets }) => {
+const Exercise: React.FC<IExerciseProps> = ({ name, sets }) => {
   return (
     <div className="exercise">
       <h4>{name}</h4>

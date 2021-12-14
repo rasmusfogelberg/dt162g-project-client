@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 
 import { Button, Form, Input } from "../../components/UI/";
-import Workout from "../../components/Workout/Workout";
 import DefaultLayout from "../../layouts/DefaultLayout";
 
 const API_URL = "http://localhost:3001/workouts";

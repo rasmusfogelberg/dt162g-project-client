@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-import { Button, Form, Input } from "../../components/UI/";
+import { Button, Input } from "../../components/UI/";
 
-import Workout from "../../components/Workout/Workout";
 import DefaultLayout from "../../layouts/DefaultLayout";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,6 +11,23 @@ import "./newWorkoutDetailPage.css";
 
 const API_URL = "http://localhost:3001/exercises";
 
+/* 
+                    TODO: Change this console log to create and exercise with that name
+                    and then have 1 set ready with weight and reps ready to be filled in
+                    Also show a new button to add more sets.
+
+                    Ideas how to do this:
+                    - Add div with empty array/object above searchbar. When the user adds
+                    a new exercise name it will be stored in the object above and show
+                    exercise name and a row for a set. Under this set is a save-button that
+                    will save set and add a field for a new one.
+                    
+
+                    Worse idea:
+                    - Add a new page for adding a exercise with sets. Would be able to use
+                    workout ID and exercise ID to keep track of it.
+ */
+
 function NewWorkoutDetailPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -20,6 +36,8 @@ function NewWorkoutDetailPage() {
   const [exercises, setExercises] = useState<any[]>([]);
   const [filteredExercises, setFilteredExercises] = useState<any[]>([]);
   const [newExerciseName, setNewExerciseName] = useState("");
+
+  const [workoutExercises, setWorkoutExercises] = useState<any>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -52,30 +70,47 @@ function NewWorkoutDetailPage() {
     );
   }, [search, exercises]);
 
+  const handleOnSaveNewExercise = (event: React.FormEvent) => {
+    event.preventDefault();
 
-   const handleOnSaveNewExercise = (event: React.FormEvent) => {
-     event.preventDefault();
+    const createExercise = async () => {
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: newExerciseName,
+          }),
+        });
 
-     const createExercise = async () => {
-       try {
-         const response = await fetch(API_URL, {
-           method: "POST",
-           headers: { "Content-Type": "application/json" },
-           body: JSON.stringify({
-             name: newExerciseName,
-           }),
-         });
+        if (response.ok && response.status === 200) {
+          await response.json();
+          setIsOpen(false);
+        }
+      } catch (error) {
+        console.log("error ", error);
+      }
+    };
+    createExercise();
+  };
 
-         if (response.ok && response.status === 200) {
-           const json = await response.json();
-           setIsOpen(false);
-         }
-       } catch (error) {
-         console.log("error ", error);
-       }
-     };
-     createExercise();
-   };
+  const handleAddExerciseToWorkout = (exercise: any) => {
+    setWorkoutExercises([
+      ...workoutExercises,
+      {
+        id: `${Math.random()}-${exercise._id}`,
+        name: exercise.name,
+        sets: [{ weight: 0, reps: 0 }],
+      },
+    ]);
+  };
+
+  const handleAddExerciseSetToWorkout = () => {
+    console.log("This will add a set to the exercise, not yet implemented 😂");
+    // TODO: pass the exercise that was clicked, then add a
+    // new blank set to the exercise -> sets array using a
+    // {weight: 0, reps: 0} object
+  };
 
   return (
     <DefaultLayout>
@@ -134,9 +169,10 @@ function NewWorkoutDetailPage() {
             <div style={{ padding: "12px" }}>
               {filteredExercises?.map((exercise) => (
                 <div
+                  key={exercise._id}
                   className="exerciseRow"
                   onClick={() => {
-                    console.log('Hallu');
+                    handleAddExerciseToWorkout(exercise);
                   }}
                 >
                   {exercise.name}
@@ -145,6 +181,34 @@ function NewWorkoutDetailPage() {
               ))}
             </div>
           )}
+          <div style={{ padding: "12px", marginTop: "18px" }}>
+            <h2>Exercises</h2>
+            {workoutExercises?.map((workoutExercise: any) => (
+              <div
+                key={Math.random() + workoutExercise.name}
+                className="workoutExerciseRow"
+              >
+                <header>
+                  {workoutExercise.name}
+                  <FontAwesomeIcon icon={solid("circle-question")} />
+                </header>
+                {workoutExercise?.sets.map((set: any) => (
+                  <div key={set._id} className="content">
+                    <span className="setNumber">1</span>
+                    <span className="setWeight">{set.weight} kg</span>
+                    <span className="setRep">{set.reps} reps</span>
+                  </div>
+                ))}
+                <div
+                  className="addSet"
+                  onClick={() => handleAddExerciseSetToWorkout()}
+                >
+                  <FontAwesomeIcon icon={solid("plus")} />
+                  <span>Add set</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </DefaultLayout>

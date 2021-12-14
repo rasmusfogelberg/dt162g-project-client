@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router";
 
-import Exercise from "../Exercise/Exercise";
 import "./workout.css";
 
 interface WorkoutProps {

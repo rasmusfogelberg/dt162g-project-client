@@ -28,7 +28,7 @@ function ArchiveItemPage() {
           <h2>{workout.name}</h2>
           <div>
             {workout?.exercises.map((exercise: any) => (
-              <Exercise name={exercise.name} sets={exercise.sets} />
+              <Exercise key={exercise._id} name={exercise.name} sets={exercise.sets} />
             ))}
           </div>
         </>
