@@ -1,0 +1,16 @@
+.exerciseRow {
+  cursor: pointer;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0.25em;
+  border-bottom: 1px solid black;
+  font-size: 18pt;
+  padding: 18px 18px;
+  background-color: #22252a;
+}
+
+.exerciseRow:hover {
+  background-color: #3d434b;
+}

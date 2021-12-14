@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import "./archive.css";
 
-import Workout from "../components/Workout/Workout";
+import Workout from "../../components/Workout/Workout";
+import DefaultLayout from "../../layouts/DefaultLayout";
 
-function ArchivesPage() {
+function ArchivePage() {
   const [workouts, setWorkouts] = useState([]);
 
   useEffect(() => {
@@ -21,7 +22,7 @@ function ArchivesPage() {
   }, []);
 
   return (
-    <div className="moveMeLaterWrapper">
+    <DefaultLayout>
       <div className="workoutsWrapper">
         {workouts.map((workout: any) => (
           <Workout
@@ -32,8 +33,8 @@ function ArchivesPage() {
           />
         ))}
       </div>
-    </div>
+    </DefaultLayout>
   );
 }
 
-export default ArchivesPage;
+export default ArchivePage;
