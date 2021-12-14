@@ -1,16 +1,23 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { ReactComponent as Logo } from "../../assets/svg/logo-getfit.svg";
 
 import "./mainNav.css";
+
 function MainNav() {
   return (
-    <header>
-      <nav>
+    <header className="fixedWrapper">
+      <div className="logoWrapper">
+        <NavLink to={"/"}>
+          <Logo />
+        </NavLink>
+      </div>
+      <nav className="navWrapper">
         <ul>
           <li>
-            <Link to="/">New Workout</Link>
+            <NavLink to="/">New Workout</NavLink>
           </li>
           <li>
-            <Link to="/archive">Archive</Link>
+            <NavLink to="/archive">Archive</NavLink>
           </li>
         </ul>
       </nav>
