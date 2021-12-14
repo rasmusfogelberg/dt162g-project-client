@@ -1,0 +1,16 @@
+.wrapper {
+  margin-top: 8em;
+  min-height: calc(100vh - 6em);
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+
+  padding: 16px;
+}
+
+.headerWrapper {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0px;
+  z-index: 100;
+}
