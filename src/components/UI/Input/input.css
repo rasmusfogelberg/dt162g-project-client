@@ -4,3 +4,10 @@ input {
   margin: 0 10px;
   border: none;
 }
+
+label {
+  font-weight: 500;
+  font-size: 16pt;
+  padding: 0 12px;
+  margin: 10px 0;
+}

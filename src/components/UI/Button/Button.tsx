@@ -2,7 +2,7 @@ import './button.css';
 
 interface ButtonProps {
   children: React.ReactNode | React.ReactNode[]
-  onClick: (e: any) => any;
+  onClick?: (e?: any) => void
 }
 
 const Button: React.FC<ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ children, onClick, ...rest}) => {
