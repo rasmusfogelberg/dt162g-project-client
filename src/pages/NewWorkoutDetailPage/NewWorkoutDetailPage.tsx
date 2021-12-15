@@ -8,25 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 import Modal from "../../components/UI/Modal/Modal";
 import "./newWorkoutDetailPage.css";
+import Exercise from "../../components/Exercise/Exercise";
 
 const API_URL = "http://localhost:3001/exercises";
-
-/* 
-                    TODO: Change this console log to create and exercise with that name
-                    and then have 1 set ready with weight and reps ready to be filled in
-                    Also show a new button to add more sets.
-
-                    Ideas how to do this:
-                    - Add div with empty array/object above searchbar. When the user adds
-                    a new exercise name it will be stored in the object above and show
-                    exercise name and a row for a set. Under this set is a save-button that
-                    will save set and add a field for a new one.
-                    
-
-                    Worse idea:
-                    - Add a new page for adding a exercise with sets. Would be able to use
-                    workout ID and exercise ID to keep track of it.
- */
 
 function NewWorkoutDetailPage() {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,6 +22,7 @@ function NewWorkoutDetailPage() {
   const [newExerciseName, setNewExerciseName] = useState("");
 
   const [workoutExercises, setWorkoutExercises] = useState<any>([]);
+  const [exerciseSets, SetExerciseSets] = useState<any>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -105,11 +90,21 @@ function NewWorkoutDetailPage() {
     ]);
   };
 
-  const handleAddExerciseSetToWorkout = () => {
-    console.log("This will add a set to the exercise, not yet implemented 😂");
-    // TODO: pass the exercise that was clicked, then add a
-    // new blank set to the exercise -> sets array using a
-    // {weight: 0, reps: 0} object
+  const handleAddExerciseSetToWorkout = (workoutExercise: any) => {
+    workoutExercise.sets.push({ // TODO: Why is this bad? It works!
+      weight: 0,
+      reps: 0,
+    });
+    setWorkoutExercises([...workoutExercises]);
+  };
+
+  const handleDeleteSet = (workoutExercise: any, setIndex: number) => {
+    debugger;
+    workoutExercise.sets.filter((set: any, index: number) => {
+      return setIndex !== index 
+    });
+    setWorkoutExercises([...workoutExercises]);
+   
   };
 
   return (
@@ -192,16 +187,21 @@ function NewWorkoutDetailPage() {
                   {workoutExercise.name}
                   <FontAwesomeIcon icon={solid("circle-question")} />
                 </header>
-                {workoutExercise?.sets.map((set: any) => (
+                {workoutExercise?.sets.map((set: any, setIndex: number) => (
                   <div key={set._id} className="content">
                     <span className="setNumber">1</span>
                     <span className="setWeight">{set.weight} kg</span>
                     <span className="setRep">{set.reps} reps</span>
+                    <FontAwesomeIcon
+                      icon={solid("trash-alt")}
+                      style={{ alignSelf: "center" }}
+                      onClick={() => handleDeleteSet(workoutExercise, setIndex)}
+                    />
                   </div>
                 ))}
                 <div
                   className="addSet"
-                  onClick={() => handleAddExerciseSetToWorkout()}
+                  onClick={() => handleAddExerciseSetToWorkout(workoutExercise)}
                 >
                   <FontAwesomeIcon icon={solid("plus")} />
                   <span>Add set</span>

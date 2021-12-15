@@ -49,7 +49,7 @@
   border-color: black;
   border-style: solid;
   display: grid;
-  grid-template-columns: [set-number] 80px [set-weight] 1fr [set-rep] 1fr;
+  grid-template-columns: [set-number] 80px [set-weight] 1fr [set-rep] 1fr [set-del] 20px;
   width: 100%;
 }
 
