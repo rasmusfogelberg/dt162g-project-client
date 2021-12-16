@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Exercise from "../../components/Exercise/Exercise";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
+
 import DefaultLayout from "../../layouts/DefaultLayout";
 
+import Exercise, { IExercise } from "../../components/Exercise/Exercise";
+import Button from "../../components/UI/Button/Button";
+
 function ArchiveItemPage() {
+  const [locked, setLocked] = useState(false);
   const { workoutId } = useParams();
   const [workout, setWorkout] = useState<any>(null);
 
@@ -25,11 +31,34 @@ function ArchiveItemPage() {
     <DefaultLayout>
       {workout && (
         <>
-          <h2>{workout.name}</h2>
+          <header
+            style={{
+              display: "flex",
+              flex: "1",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <h2>
+              {workout.name}{" "}
+              <FontAwesomeIcon
+                icon={solid("pencil-alt")}
+                style={{ alignSelf: "center", cursor: "pointer" }}
+                onClick={() => setLocked(!locked)}
+              />
+            </h2>
+          </header>
           <div>
-            {workout?.exercises.map((exercise: any) => (
-              <Exercise key={exercise._id} name={exercise.name} sets={exercise.sets} />
-            ))}
+            {workout?.exercises.map(
+              (exercise: IExercise, exerciseIndex: number) => (
+                <Exercise
+                  locked={locked}
+                  key={exercise.id}
+                  exercise={exercise}
+                  exerciseIndex={exerciseIndex}
+                />
+              )
+            )}
           </div>
         </>
       )}

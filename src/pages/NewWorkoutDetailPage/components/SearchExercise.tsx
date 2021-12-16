@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Input, Button } from "../../../components/UI";
 
 interface SearchExerciseProps {
+  onCreateNewExercise: () => void;
   onSelectExercise: (exercise: any) => void;
   loading: boolean;
-  exercises: any[]
+  exercises: any[];
 }
 
 const SearchExercise: React.FC<SearchExerciseProps> = ({
+  onCreateNewExercise,
   onSelectExercise,
   loading,
   exercises,
@@ -50,23 +52,27 @@ const SearchExercise: React.FC<SearchExerciseProps> = ({
             No exercises to choose, why not create one?
           </p>
           {/* TODO: Do something with the click here? */}
-          <Button style={{ backgroundColor: "orange" }} onClick={() => {}}>
+          <Button style={{ backgroundColor: "orange" }} onClick={onCreateNewExercise}>
             Create new exercise
           </Button>
         </div>
       )}
 
-      {!loading && search !== "" && filteredExercises.length === 0 ? (
+      {!loading && filteredExercises.length === 0 ? (
         <div style={{ padding: "12px" }}>
           <p style={{ fontStyle: "italic" }}>
             No matches for: <em>{search}</em>
           </p>
-          <Button style={{ backgroundColor: "orange" }} onClick={() => {}}>
+          <Button style={{ backgroundColor: "orange" }} onClick={onCreateNewExercise}>
             Create new exercise
           </Button>
         </div>
       ) : (
-        <div style={{ padding: "12px" }}>{searchResults}</div>
+        <>
+          {search !== "" && (
+            <div style={{ padding: "12px" }}>{searchResults}</div>
+          )}
+        </>
       )}
     </>
   );

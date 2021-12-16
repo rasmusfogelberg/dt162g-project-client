@@ -69,19 +69,23 @@
 }
 
 .workoutExerciseRow .setNumber {
-  text-align: center;  
+  text-align: center;
   position: relative;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 }
 
 .workoutExerciseRow .setNumber::after {
-  content: '';
+  content: "";
   display: block;
-  height: 60px;
+  height: 97px;
   width: 1px;
   position: absolute;
   right: 0;
   top: -10px;
-  background-color: rgba(33,33,33, 0.6);
+  background-color: rgba(33, 33, 33, 0.6);
 }
 
 .workoutExerciseRow .setWeight,

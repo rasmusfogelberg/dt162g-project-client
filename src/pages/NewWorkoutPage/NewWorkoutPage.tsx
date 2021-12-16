@@ -3,8 +3,7 @@ import { useNavigate } from "react-router";
 
 import { Button, Form, Input } from "../../components/UI/";
 import DefaultLayout from "../../layouts/DefaultLayout";
-
-const API_URL = "http://localhost:3001/workouts";
+import { createWorkout } from "../../services/createWorkout";
 
 function NewWorkoutPage() {
   const navigate = useNavigate();
@@ -12,29 +11,10 @@ function NewWorkoutPage() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
-    const postData = async () => {
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: workoutName
-          })
-        });
-
-        if (response.ok && response.status === 200) {
-          const json = await response.json();
-          if (json.workout) {
-            // Navigate to detail view for newly created workout
-            navigate(`/new/${json.workout._id}`);
-          }
-        }
-      } catch (error) {
-        console.log("error ", error);
-      }
-    };
-    postData();
+    createWorkout(workoutName).then((response: any) => {
+      // Navigate to detail view for newly created workout
+      navigate(`/new/${response.workout._id}`);
+    })
   };
 
   return (

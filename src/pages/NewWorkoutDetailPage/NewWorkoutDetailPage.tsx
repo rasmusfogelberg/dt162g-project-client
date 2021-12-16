@@ -7,12 +7,19 @@ import DefaultLayout from "../../layouts/DefaultLayout";
 import Modal from "../../components/UI/Modal/Modal";
 import { Button, Input } from "../../components/UI/";
 
-import Exercise from "../../components/Exercise/Exercise";
+import Exercise, { IExercise } from "../../components/Exercise/Exercise";
+import { ISet } from "../../components/Set/Set";
+
 import SearchExercise from "./components/SearchExercise";
 
-const API_URL = "http://localhost:3001/exercises";
+import { getExercises } from "../../services/getExercises";
+import { createExercise } from "../../services/createExercise";
+import { updateExercise } from "../../services/updateExercise";
+import { updateWorkout } from "../../services/updateWorkout";
+import { useParams } from "react-router-dom";
 
 function NewWorkoutDetailPage() {
+  const { workoutId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -23,49 +30,22 @@ function NewWorkoutDetailPage() {
 
   useEffect(() => {
     setLoading(true);
-
-    const fetchExercises = async () => {
-      try {
-        const response = await fetch(API_URL);
-
-        if (!response.ok) {
-          throw new Error("Error occured when trying to fetch exercises.");
-        }
-
-        const json = await response.json();
-
-        setExercises(json);
+    if (!isOpen) {
+      getExercises().then((exercises) => {
+        setExercises(exercises);
         setLoading(false);
-      } catch (error) {
-        console.log("Error", error);
-      }
-    };
+      });
+    }
+  }, [isOpen]);
 
-    fetchExercises();
-  }, []);
-
-  const handleOnSaveNewExercise = (event: React.FormEvent) => {
+  const handleOnSaveNewExercise = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    const createExercise = async () => {
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: newExerciseName,
-          }),
-        });
-
-        if (response.ok && response.status === 200) {
-          await response.json();
-          setIsOpen(false);
-        }
-      } catch (error) {
-        console.log("error ", error);
-      }
-    };
-    createExercise();
+    try {
+      await createExercise(newExerciseName);
+      setIsOpen(false);
+    } catch (error) {
+      console.log("Error while creating new exercise", error);
+    }
   };
 
   const handleAddExerciseToWorkout = (exercise: any) => {
@@ -79,7 +59,7 @@ function NewWorkoutDetailPage() {
     setWorkoutExercises([
       ...workoutExercises,
       {
-        id: `${exercise._id}`,
+        _id: `${exercise._id}`,
         name: exercise.name,
         sets: [{ weight: 0, reps: 0 }],
       },
@@ -145,6 +125,35 @@ function NewWorkoutDetailPage() {
     setWorkoutExercises(newExercises);
   };
 
+  const handleUpdateWorkoutSet = (
+    workoutExercise: IExercise,
+    exerciseIndex: number,
+    setIndex: number,
+    updatedSet: ISet
+  ) => {
+    const newExercise = { ...workoutExercise };
+    const newSets = [...newExercise.sets];
+
+    newSets[setIndex] = updatedSet;
+    newExercise.sets = newSets;
+
+    const newExercises = [...workoutExercises];
+
+    newExercises[exerciseIndex] = newExercise;
+    setWorkoutExercises(newExercises);
+  }
+
+
+  const handleUpdateWorkout = (workoutId: string) => {
+    updateWorkout(workoutId, workoutExercises);
+    debugger;
+  
+    
+    // Profit
+   
+  };
+  
+
   return (
     <DefaultLayout>
       <Modal opened={isOpen} close={() => setIsOpen(false)}>
@@ -169,6 +178,7 @@ function NewWorkoutDetailPage() {
           style={{ display: "flex", flexDirection: "column", width: "100%" }}
         >
           <SearchExercise
+            onCreateNewExercise={() => setIsOpen(!isOpen)}
             onSelectExercise={(exercise: any) =>
               handleAddExerciseToWorkout(exercise)
             }
@@ -176,27 +186,59 @@ function NewWorkoutDetailPage() {
             exercises={exercises}
           />
 
-          <div style={{ padding: "12px", marginTop: "18px" }}>
-            <h2>Exercises</h2>
-            {workoutExercises?.map(
-              (workoutExercise: any, exerciseIndex: number) => (
-                <Exercise
-                  exercise={workoutExercise}
-                  exerciseIndex={exerciseIndex}
-                  onDeleteExercise={() => handleDeleteExercise(exerciseIndex)}
-                  onDeleteSet={(workoutExercise, exerciseIndex, setIndex) =>
-                    handleDeleteSet(workoutExercise, exerciseIndex, setIndex)
-                  }
-                  onAddSet={() =>
-                    handleAddExerciseSetToWorkout(
-                      workoutExercise,
-                      exerciseIndex
-                    )
-                  }
-                />
-              )
-            )}
-          </div>
+          {workoutExercises.length > 0 && (
+            <>
+              <div style={{ padding: "12px", marginTop: "18px" }}>
+                <h2>Exercises</h2>
+                {workoutExercises?.map(
+                  (workoutExercise: any, exerciseIndex: number) => (
+                    <Exercise
+                      exercise={workoutExercise}
+                      exerciseIndex={exerciseIndex}
+                      onDeleteExercise={() =>
+                        handleDeleteExercise(exerciseIndex)
+                      }
+                      onDeleteSet={(workoutExercise, exerciseIndex, setIndex) =>
+                        handleDeleteSet(
+                          workoutExercise,
+                          exerciseIndex,
+                          setIndex
+                        )
+                      }
+                      onAddSet={() =>
+                        handleAddExerciseSetToWorkout(
+                          workoutExercise,
+                          exerciseIndex
+                        )
+                      }
+                      onUpdateSet={(
+                        workoutExercise,
+                        exerciseIndex,
+                        setIndex,
+                        updatedSet
+                      ) => {
+                        handleUpdateWorkoutSet(
+                          workoutExercise,
+                          exerciseIndex,
+                          setIndex,
+                          updatedSet
+                        );
+                      }}
+                    />
+                  )
+                )}
+              </div>
+              {workoutId && (
+                <Button
+                  onClick={() => {
+                    handleUpdateWorkout(workoutId);
+                  }}
+                >
+                  Save the damn thing
+                </Button>
+              )}
+            </>
+          )}
         </div>
       )}
     </DefaultLayout>

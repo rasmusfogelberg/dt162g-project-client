@@ -6,50 +6,77 @@ import "./exercise.css";
 
 import Set, { ISet } from "../Set/Set";
 
-interface IExercise {
-  id: string;
+export interface IExercise {
+  _id: string;
   name: string;
   sets: ISet[];
 }
 
 interface IExerciseProps {
+  locked?: boolean;
   exercise: IExercise;
   exerciseIndex: number;
 
-  onDeleteExercise: (exerciseIndex: number) => void;
-  onDeleteSet: (exercise: any, exerciseIndex: number, setIndex: number) => void;
-  onAddSet: (exercise: any, exerciseIndex: number) => void;
+  onDeleteExercise?: (exerciseIndex: number) => void;
+  onDeleteSet?: (
+    exercise: IExercise,
+    exerciseIndex: number,
+    setIndex: number
+  ) => void;
+  onAddSet?: (exercise: IExercise, exerciseIndex: number) => void;
+  onUpdateSet?: (
+    exercise: IExercise,
+    exerciseIndex: number,
+    setIndex: number,
+    updatedSet: ISet
+  ) => void;
 }
 
 const Exercise: React.FC<IExerciseProps> = ({
+  locked = false,
   exercise,
   exerciseIndex,
   onDeleteExercise,
   onDeleteSet,
   onAddSet,
+  onUpdateSet,
 }) => {
-  const { id, name, sets } = exercise;
+  const { _id, name, sets } = exercise;
   return (
-    <div key={id} className="workoutExerciseRow">
+    <div key={_id} className="workoutExerciseRow">
       <header>
         {name}
-        <FontAwesomeIcon
-          icon={solid("trash-alt")}
-          style={{ cursor: "pointer" }}
-          onClick={() => onDeleteExercise(exerciseIndex)}
-        />
+        {!locked && (
+          <FontAwesomeIcon
+            icon={solid("trash-alt")}
+            style={{ cursor: "pointer" }}
+            onClick={() => onDeleteExercise && onDeleteExercise(exerciseIndex)}
+          />
+        )}
       </header>
       {sets?.map((set: ISet, setIndex: number) => (
         <Set
+          locked={locked}
           set={set}
           setIndex={setIndex}
-          onDeleteSet={() => onDeleteSet(exercise, exerciseIndex, setIndex)}
+          onDeleteSet={() =>
+            onDeleteSet && onDeleteSet(exercise, exerciseIndex, setIndex)
+          }
+          onUpdateSet={(updatedSet: ISet) => {
+            console.log('Updated set in exercise', updatedSet);
+            onUpdateSet && onUpdateSet(exercise, exerciseIndex, setIndex, updatedSet);
+          }}
         />
       ))}
-      <div className="addSet" onClick={() => onAddSet(exercise, exerciseIndex)}>
-        <FontAwesomeIcon icon={solid("plus")} />
-        <span>Add set</span>
-      </div>
+      {!locked && (
+        <div
+          className="addSet"
+          onClick={() => onAddSet && onAddSet(exercise, exerciseIndex)}
+        >
+          <FontAwesomeIcon icon={solid("plus")} />
+          <span>Add set</span>
+        </div>
+      )}
     </div>
   );
 };

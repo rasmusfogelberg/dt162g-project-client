@@ -3,7 +3,7 @@
   min-height: calc(100vh - 6em);
   display: flex;
   flex: 1;
-  flex-direction: row;
+  flex-direction: column;
 
   padding: 16px;
 }
