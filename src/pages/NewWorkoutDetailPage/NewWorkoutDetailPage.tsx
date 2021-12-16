@@ -1,28 +1,26 @@
 import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 
-import { Button, Input } from "../../components/UI/";
+import "./newWorkoutDetailPage.css";
 
 import DefaultLayout from "../../layouts/DefaultLayout";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 import Modal from "../../components/UI/Modal/Modal";
-import "./newWorkoutDetailPage.css";
-import Exercise from "../../components/Exercise/Exercise";
+import { Button, Input } from "../../components/UI/";
+
+import SearchExercise from "./components/SearchExercise";
 
 const API_URL = "http://localhost:3001/exercises";
 
 function NewWorkoutDetailPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("");
 
   const [exercises, setExercises] = useState<any[]>([]);
-  const [filteredExercises, setFilteredExercises] = useState<any[]>([]);
   const [newExerciseName, setNewExerciseName] = useState("");
 
   const [workoutExercises, setWorkoutExercises] = useState<any>([]);
-  const [exerciseSets, SetExerciseSets] = useState<any>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -46,14 +44,6 @@ function NewWorkoutDetailPage() {
 
     fetchExercises();
   }, []);
-
-  useEffect(() => {
-    setFilteredExercises(
-      exercises.filter((exercise) =>
-        exercise.name.toLowerCase().includes(search.toLowerCase())
-      )
-    );
-  }, [search, exercises]);
 
   const handleOnSaveNewExercise = (event: React.FormEvent) => {
     event.preventDefault();
@@ -80,31 +70,80 @@ function NewWorkoutDetailPage() {
   };
 
   const handleAddExerciseToWorkout = (exercise: any) => {
+    if (
+      workoutExercises.filter(
+        (workoutExercise: any) => workoutExercise.id === exercise._id
+      ).length > 0
+    ) {
+      return;
+    }
     setWorkoutExercises([
       ...workoutExercises,
       {
-        id: `${Math.random()}-${exercise._id}`,
+        id: `${exercise._id}`,
         name: exercise.name,
         sets: [{ weight: 0, reps: 0 }],
       },
     ]);
   };
 
-  const handleAddExerciseSetToWorkout = (workoutExercise: any) => {
-    workoutExercise.sets.push({ // TODO: Why is this bad? It works!
+  const handleDeleteExercise = (exerciseIndex: number) => {
+    let newExercises = [...workoutExercises];
+
+    let filteredExercises = newExercises.filter(
+      (exercise: any, index: number) => {
+        return exerciseIndex !== index;
+      }
+    );
+
+    setWorkoutExercises(filteredExercises);
+  };
+
+  const handleAddExerciseSetToWorkout = (
+    workoutExercise: any,
+    exerciseIndex: number
+  ) => {
+    // Make copy of current state
+    const newSets = [...workoutExercise.sets];
+    // Now push new item to the copy of the current state (doesn't modify state directly!)
+    newSets.push({
       weight: 0,
       reps: 0,
     });
-    setWorkoutExercises([...workoutExercises]);
+
+    // Again, make a copy of the current state
+    const newExercise = { ...workoutExercise };
+
+    // Set the sets to our updated copy above, again this is a copy of the exercise in state
+    newExercise.sets = newSets;
+
+    // Yet again, make a copy of all the current exercises in the state
+    const newExercises = [...workoutExercises];
+
+    // Now, given the current index of the exercise that we've added a new set to,
+    // replace that with our new copy of the exercise
+    newExercises[exerciseIndex] = newExercise;
+
+    // Update the state with our updated copy of all the exercises
+    setWorkoutExercises(newExercises);
   };
 
-  const handleDeleteSet = (workoutExercise: any, setIndex: number) => {
-    debugger;
-    workoutExercise.sets.filter((set: any, index: number) => {
-      return setIndex !== index 
-    });
-    setWorkoutExercises([...workoutExercises]);
-   
+  const handleDeleteSet = (
+    workoutExercise: any,
+    exerciseIndex: number,
+    setIndex: number
+  ) => {
+    const newExercise = { ...workoutExercise };
+
+    newExercise.sets = newExercise.sets.filter(
+      (set: any, index: number) => setIndex !== index
+    );
+
+    const newExercises = [...workoutExercises];
+
+    newExercises[exerciseIndex] = newExercise;
+
+    setWorkoutExercises(newExercises);
   };
 
   return (
@@ -130,84 +169,62 @@ function NewWorkoutDetailPage() {
         <div
           style={{ display: "flex", flexDirection: "column", width: "100%" }}
         >
-          <Input
-            label="Search exercise"
-            placeholder="Search exercise..."
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearch(e.target.value)
+          <SearchExercise
+            onSelectExercise={(exercise: any) =>
+              handleAddExerciseToWorkout(exercise)
             }
+            loading={loading}
+            exercises={exercises}
           />
-          {!loading && exercises.length === 0 && (
-            <div style={{ padding: "12px" }}>
-              <p style={{ fontStyle: "italic" }}>
-                No exercises to choose, why not create one?
-              </p>
-              <Button style={{ backgroundColor: "orange" }} onClick={() => {}}>
-                Create new exercise
-              </Button>
-            </div>
-          )}
 
-          {!loading && search !== "" && filteredExercises.length === 0 ? (
-            <div style={{ padding: "12px" }}>
-              <p style={{ fontStyle: "italic" }}>
-                No matches for: <em>{search}</em>
-              </p>
-              <Button
-                style={{ backgroundColor: "orange" }}
-                onClick={() => setIsOpen(!isOpen)}
-              >
-                Create new exercise
-              </Button>
-            </div>
-          ) : (
-            <div style={{ padding: "12px" }}>
-              {filteredExercises?.map((exercise) => (
-                <div
-                  key={exercise._id}
-                  className="exerciseRow"
-                  onClick={() => {
-                    handleAddExerciseToWorkout(exercise);
-                  }}
-                >
-                  {exercise.name}
-                  <FontAwesomeIcon icon={solid("circle-question")} />
-                </div>
-              ))}
-            </div>
-          )}
           <div style={{ padding: "12px", marginTop: "18px" }}>
             <h2>Exercises</h2>
-            {workoutExercises?.map((workoutExercise: any) => (
-              <div
-                key={Math.random() + workoutExercise.name}
-                className="workoutExerciseRow"
-              >
-                <header>
-                  {workoutExercise.name}
-                  <FontAwesomeIcon icon={solid("circle-question")} />
-                </header>
-                {workoutExercise?.sets.map((set: any, setIndex: number) => (
-                  <div key={set._id} className="content">
-                    <span className="setNumber">1</span>
-                    <span className="setWeight">{set.weight} kg</span>
-                    <span className="setRep">{set.reps} reps</span>
+            {workoutExercises?.map(
+              (workoutExercise: any, exerciseIndex: number) => (
+                <div
+                  key={Math.random() + workoutExercise.name}
+                  className="workoutExerciseRow"
+                >
+                  <header>
+                    {workoutExercise.name}
                     <FontAwesomeIcon
                       icon={solid("trash-alt")}
-                      style={{ alignSelf: "center" }}
-                      onClick={() => handleDeleteSet(workoutExercise, setIndex)}
+                      onClick={() => handleDeleteExercise(exerciseIndex)}
                     />
+                  </header>
+                  {workoutExercise?.sets.map((set: any, setIndex: number) => (
+                    <div key={set._id} className="content">
+                      <span className="setNumber">{setIndex}</span>
+                      <span className="setWeight">{set.weight} kg</span>
+                      <span className="setRep">{set.reps} reps</span>
+                      <FontAwesomeIcon
+                        icon={solid("trash-alt")}
+                        style={{ alignSelf: "center" }}
+                        onClick={() =>
+                          handleDeleteSet(
+                            workoutExercise,
+                            exerciseIndex,
+                            setIndex
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
+                  <div
+                    className="addSet"
+                    onClick={() =>
+                      handleAddExerciseSetToWorkout(
+                        workoutExercise,
+                        exerciseIndex
+                      )
+                    }
+                  >
+                    <FontAwesomeIcon icon={solid("plus")} />
+                    <span>Add set</span>
                   </div>
-                ))}
-                <div
-                  className="addSet"
-                  onClick={() => handleAddExerciseSetToWorkout(workoutExercise)}
-                >
-                  <FontAwesomeIcon icon={solid("plus")} />
-                  <span>Add set</span>
                 </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
         </div>
       )}
