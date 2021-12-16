@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 
-import "./newWorkoutDetailPage.css";
-
 import DefaultLayout from "../../layouts/DefaultLayout";
 
 import Modal from "../../components/UI/Modal/Modal";
 import { Button, Input } from "../../components/UI/";
 
+import Exercise from "../../components/Exercise/Exercise";
 import SearchExercise from "./components/SearchExercise";
 
 const API_URL = "http://localhost:3001/exercises";
@@ -181,48 +180,20 @@ function NewWorkoutDetailPage() {
             <h2>Exercises</h2>
             {workoutExercises?.map(
               (workoutExercise: any, exerciseIndex: number) => (
-                <div
-                  key={Math.random() + workoutExercise.name}
-                  className="workoutExerciseRow"
-                >
-                  <header>
-                    {workoutExercise.name}
-                    <FontAwesomeIcon
-                      icon={solid("trash-alt")}
-                      onClick={() => handleDeleteExercise(exerciseIndex)}
-                    />
-                  </header>
-                  {workoutExercise?.sets.map((set: any, setIndex: number) => (
-                    <div key={set._id} className="content">
-                      <span className="setNumber">{setIndex}</span>
-                      <span className="setWeight">{set.weight} kg</span>
-                      <span className="setRep">{set.reps} reps</span>
-                      <FontAwesomeIcon
-                        icon={solid("trash-alt")}
-                        style={{ alignSelf: "center" }}
-                        onClick={() =>
-                          handleDeleteSet(
-                            workoutExercise,
-                            exerciseIndex,
-                            setIndex
-                          )
-                        }
-                      />
-                    </div>
-                  ))}
-                  <div
-                    className="addSet"
-                    onClick={() =>
-                      handleAddExerciseSetToWorkout(
-                        workoutExercise,
-                        exerciseIndex
-                      )
-                    }
-                  >
-                    <FontAwesomeIcon icon={solid("plus")} />
-                    <span>Add set</span>
-                  </div>
-                </div>
+                <Exercise
+                  exercise={workoutExercise}
+                  exerciseIndex={exerciseIndex}
+                  onDeleteExercise={() => handleDeleteExercise(exerciseIndex)}
+                  onDeleteSet={(workoutExercise, exerciseIndex, setIndex) =>
+                    handleDeleteSet(workoutExercise, exerciseIndex, setIndex)
+                  }
+                  onAddSet={() =>
+                    handleAddExerciseSetToWorkout(
+                      workoutExercise,
+                      exerciseIndex
+                    )
+                  }
+                />
               )
             )}
           </div>

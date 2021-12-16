@@ -4,7 +4,7 @@ import { Input, Button } from "../../../components/UI";
 interface SearchExerciseProps {
   onSelectExercise: (exercise: any) => void;
   loading: boolean;
-  exercises: any[];
+  exercises: any[]
 }
 
 const SearchExercise: React.FC<SearchExerciseProps> = ({
