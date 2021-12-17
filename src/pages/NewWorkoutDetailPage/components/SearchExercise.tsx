@@ -47,7 +47,7 @@ const SearchExercise: React.FC<SearchExerciseProps> = ({
   // JSX
   return (
     <>
-    {/* Input filed for search */}
+      {/* Input field for search */}
       <Input
         label="Search exercise"
         placeholder="Search exercise..."
@@ -67,7 +67,7 @@ const SearchExercise: React.FC<SearchExerciseProps> = ({
         </div>
       )}
 
-        {/* Text and button shown if there were no matching results from the search */}
+      {/* Text and button shown if there were no matching results from the search */}
       {!loading && filteredExercises.length === 0 ? (
         <div style={{ padding: "12px" }}>
           <p style={{ fontStyle: "italic" }}>

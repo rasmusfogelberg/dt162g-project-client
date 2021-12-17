@@ -14,12 +14,12 @@ interface ModalProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-const Modal: React.FC<ModalProps> = ({ opened, close, children }) => {
+const Modal: React.FC<ModalProps> = ({ opened, close, children, ...rest }) => {
   const modalClassName = (`${opened ? 'open' : 'closed'}`);
 
   return ReactDOM.createPortal(
     <>
-      <div className={`modalWrapper ${modalClassName}`}>
+      <div className={`modalWrapper ${modalClassName}`} {...rest}>
         <Button className="modalCloseButton" style={{ color: 'white' }} onClick={close}>
           <FontAwesomeIcon icon={solid("times")} color="white" />
         </Button>

@@ -1,6 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
+import { v4 as uuidv4 } from "uuid";
 
 import "./exercise.css";
 
@@ -24,11 +25,12 @@ interface IExerciseProps {
     setIndex: number
   ) => void;
   onAddSet?: (exercise: IExercise, exerciseIndex: number) => void;
+  
   onUpdateSet?: (
     exercise: IExercise,
     exerciseIndex: number,
     setIndex: number,
-    updatedSet: ISet
+    event: React.ChangeEvent<HTMLInputElement>
   ) => void;
 }
 
@@ -43,7 +45,7 @@ const Exercise: React.FC<IExerciseProps> = ({
 }) => {
   const { _id, name, sets } = exercise;
   return (
-    <div key={_id} className="workoutExerciseRow">
+    <div key={uuidv4()} className="workoutExerciseRow">
       <header>
         {name}
         {!locked && (
@@ -56,15 +58,15 @@ const Exercise: React.FC<IExerciseProps> = ({
       </header>
       {sets?.map((set: ISet, setIndex: number) => (
         <Set
+          key={set.id}
           locked={locked}
           set={set}
           setIndex={setIndex}
           onDeleteSet={() =>
             onDeleteSet && onDeleteSet(exercise, exerciseIndex, setIndex)
           }
-          onUpdateSet={(updatedSet: ISet) => {
-            console.log('Updated set in exercise', updatedSet);
-            onUpdateSet && onUpdateSet(exercise, exerciseIndex, setIndex, updatedSet);
+          onUpdateSet={(e) => {
+            onUpdateSet && onUpdateSet(exercise, exerciseIndex, setIndex, e);
           }}
         />
       ))}

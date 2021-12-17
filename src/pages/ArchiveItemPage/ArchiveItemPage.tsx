@@ -6,6 +6,8 @@ import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 import DefaultLayout from "../../layouts/DefaultLayout";
 
 import Exercise, { IExercise } from "../../components/Exercise/Exercise";
+import { Button } from "../../components/UI";
+import { updateWorkout } from "../../services/updateWorkout";
 
 /*
  * "View" for a single workout when clicked in the archives
@@ -43,6 +45,23 @@ function ArchiveItemPage() {
     fetchData();
   }, [workoutId]);
 
+  // OnClick to delete an Exercise from a Workout
+  const handleDeleteExercise = (workout: any, exerciseIndex: number) => {
+    const theWorkout = { ...workout };
+
+    theWorkout.exercises = theWorkout.exercises.filter(
+      (_exercise: IExercise, index: number) => exerciseIndex !== index
+    );
+
+    setWorkout(theWorkout);
+
+  };
+
+  const handleUpdateWorkout = (workoutId: string) => {
+    const currentExercises = workout.exercises
+    updateWorkout(workoutId, currentExercises);
+  };
+
   // JSX code for the layout of the page
   return (
     <DefaultLayout>
@@ -54,6 +73,7 @@ function ArchiveItemPage() {
               <FontAwesomeIcon
                 icon={solid("pencil-alt")}
                 style={{ alignSelf: "center", cursor: "pointer" }}
+
                 onClick={() => setLocked(!locked)}
               />
             </h2>
@@ -66,10 +86,23 @@ function ArchiveItemPage() {
                   key={exercise._id}
                   exercise={exercise}
                   exerciseIndex={exerciseIndex}
+                  onDeleteExercise={() =>
+                    handleDeleteExercise(workout, exerciseIndex)
+                  }
                 />
               )
             )}
           </div>
+          {workoutId && (
+                /* Button to save all the changes in the Workout */
+                <Button
+                  onClick={() => {
+                    handleUpdateWorkout(workoutId);
+                  }}
+                >
+                  Save Workout
+                </Button>
+              )}
         </>
       )}
     </DefaultLayout>

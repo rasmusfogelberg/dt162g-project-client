@@ -1,7 +1,9 @@
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
+
 import { Input } from "../UI";
-import { useEffect, useState } from "react";
 
 export interface ISet {
   id?: string;
@@ -14,7 +16,7 @@ interface ISetProps {
   set: ISet;
   setIndex: number;
   onDeleteSet: (setIndex: number) => void;
-  onUpdateSet: (set: ISet, setIndex: number) => void;
+  onUpdateSet: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Set: React.FC<ISetProps> = ({
@@ -25,27 +27,16 @@ const Set: React.FC<ISetProps> = ({
   onUpdateSet,
 }) => {
   const { id, weight, reps } = set;
-  const [setValue, setSetValue] = useState({ weight, reps });
-
-  useEffect(() => {
-    console.log("CHANGED THE SET VALUES - PASS THIS TO PARENT", setValue);
-    onUpdateSet(setValue, setIndex);
-  }, [setValue, setIndex]);
 
   return (
-    <div key={id} className="content">
+    <div className="content">
       <span className="setNumber">{(setIndex += 1)}</span>
       <span className="setWeight">
         <Input
           type="number"
           name="weight"
-          value={setValue.weight}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setSetValue({
-              weight: Number(e.target.value),
-              reps: setValue.reps,
-            });
-          }}
+          value={weight}
+          onChange={onUpdateSet}
         />
         kg
       </span>
@@ -53,13 +44,8 @@ const Set: React.FC<ISetProps> = ({
         <Input
           type="number"
           name="reps"
-          value={setValue.reps}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setSetValue({
-              weight: setValue.weight,
-              reps: Number(e.target.value),
-            });
-          }}
+          value={reps}
+          onChange={onUpdateSet}
         />
         reps
       </span>

@@ -18,6 +18,12 @@
   flex-basis: 100%;
 }
 
+.message {
+  font-size: 30px;
+  color: white;
+  font-weight: 900;
+}
+
 @media screen and (max-width: 1026px) {
   .workoutsWrapper {
     max-height: 75vh;

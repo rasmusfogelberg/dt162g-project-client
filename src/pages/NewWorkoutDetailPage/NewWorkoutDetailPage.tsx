@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import DefaultLayout from "../../layouts/DefaultLayout";
 
@@ -15,7 +16,7 @@ import { getExercises } from "../../services/getExercises";
 import { createExercise } from "../../services/createExercise";
 import { updateWorkout } from "../../services/updateWorkout";
 
-/* 
+/*
  * "View" When a workout is updated(created) with new exercises
  *
  */
@@ -49,6 +50,7 @@ function NewWorkoutDetailPage() {
     try {
       await createExercise(newExerciseName);
       setIsOpen(false);
+      setNewExerciseName("");
     } catch (error) {
       console.log("Error while creating new exercise", error);
     }
@@ -68,7 +70,7 @@ function NewWorkoutDetailPage() {
       {
         _id: `${exercise._id}`,
         name: exercise.name,
-        sets: [{ weight: 0, reps: 0 }],
+        sets: [{ id: uuidv4(), weight: 0, reps: 0 }],
       },
     ]);
   };
@@ -95,6 +97,7 @@ function NewWorkoutDetailPage() {
     const newSets = [...workoutExercise.sets];
     // Now push new item to the copy of the current state (doesn't modify state directly!)
     newSets.push({
+      id: uuidv4(),
       weight: 0,
       reps: 0,
     });
@@ -140,26 +143,25 @@ function NewWorkoutDetailPage() {
     workoutExercise: IExercise,
     exerciseIndex: number,
     setIndex: number,
-    updatedSet: ISet
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const newExercise = { ...workoutExercise };
     const newSets = [...newExercise.sets];
 
-    newSets[setIndex] = updatedSet;
-    newExercise.sets = newSets;
-
+    //@ts-ignore
+    newExercise.sets[setIndex][event.target.name] = Number(event.target.value);
     const newExercises = [...workoutExercises];
 
     newExercises[exerciseIndex] = newExercise;
+
     setWorkoutExercises(newExercises);
-  }
+  };
 
   // Since the Workout was previously created this will just update the workout
   // with the created Exercises and their sets
   const handleUpdateWorkout = (workoutId: string) => {
     updateWorkout(workoutId, workoutExercises);
   };
-  
 
   return (
     <DefaultLayout>
@@ -186,6 +188,8 @@ function NewWorkoutDetailPage() {
         <div
           style={{ display: "flex", flexDirection: "column", width: "100%" }}
         >
+          <p>Workout details</p>
+
           {/* Search component that is used to search for Exercises in the database */}
           <SearchExercise
             onCreateNewExercise={() => setIsOpen(!isOpen)}
@@ -201,8 +205,9 @@ function NewWorkoutDetailPage() {
               <div style={{ padding: "12px", marginTop: "18px" }}>
                 <h2>Exercises</h2>
                 {workoutExercises?.map(
-                  (workoutExercise: any, exerciseIndex: number) => (
+                  (workoutExercise: IExercise, exerciseIndex: number) => (
                     <Exercise
+                      key={workoutExercise._id}
                       exercise={workoutExercise}
                       exerciseIndex={exerciseIndex}
                       /* Onclick to delete the Exercise */
@@ -228,13 +233,13 @@ function NewWorkoutDetailPage() {
                         workoutExercise,
                         exerciseIndex,
                         setIndex,
-                        updatedSet
+                        event
                       ) => {
                         handleUpdateWorkoutSet(
                           workoutExercise,
                           exerciseIndex,
                           setIndex,
-                          updatedSet
+                          event
                         );
                       }}
                     />

@@ -1,9 +1,17 @@
-import './input.css';
+import { useEffect, useRef } from "react";
+import "./input.css";
 
-const Input: React.FC<any & React.InputHTMLAttributes<HTMLInputElement>> = ({name, label, type, ...rest }) => {
+const Input: React.FC<any & React.InputHTMLAttributes<HTMLInputElement>> = ({
+  name,
+  label,
+  type,
+  ...rest
+}) => {
   return (
-    <> 
-      <label {...rest} htmlFor={name}>{label}</label>
+    <>
+      <label {...rest} htmlFor={name}>
+        {label}
+      </label>
       <input {...rest} name={name} type={type} />
     </>
   );

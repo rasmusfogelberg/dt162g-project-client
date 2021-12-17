@@ -16,6 +16,12 @@ function NewWorkoutPage() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!workoutName) {
+      alert('You need a name for the workout...');
+      return;
+    }
+
     createWorkout(workoutName).then((response: any) => {
       // Navigate to detail view for newly created workout
       navigate(`/new/${response.workout._id}`);
@@ -26,7 +32,7 @@ function NewWorkoutPage() {
   return (
     <DefaultLayout>
       {/* Creates a workout and navigates the user to the workout.
-      This workout is then updated with Exercises */}
+      The workout created here is then updated with Exercises */}
       <Form onSubmit={handleSubmit}>
         <Input
           type="text"
