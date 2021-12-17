@@ -5,6 +5,11 @@ import { Button, Form, Input } from "../../components/UI/";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import { createWorkout } from "../../services/createWorkout";
 
+/* 
+ * "View" start page where user creates a workout
+ *
+ */
+
 function NewWorkoutPage() {
   const navigate = useNavigate();
   const [workoutName, setWorkoutName] = useState("");
@@ -17,8 +22,11 @@ function NewWorkoutPage() {
     })
   };
 
+  // JSX
   return (
     <DefaultLayout>
+      {/* Creates a workout and navigates the user to the workout.
+      This workout is then updated with Exercises */}
       <Form onSubmit={handleSubmit}>
         <Input
           type="text"

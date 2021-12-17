@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Input, Button } from "../../../components/UI";
+import { IExercise } from "../../../components/Exercise/Exercise";
 
+// Interface for the search
 interface SearchExerciseProps {
   onCreateNewExercise: () => void;
   onSelectExercise: (exercise: any) => void;
@@ -14,9 +16,13 @@ const SearchExercise: React.FC<SearchExerciseProps> = ({
   loading,
   exercises,
 }) => {
+  // State for what the user has typed into the input
   const [search, setSearch] = useState("");
-  const [filteredExercises, setFilteredExercises] = useState<any[]>([]);
+  // State for the filtered Exercises in the database
+  const [filteredExercises, setFilteredExercises] = useState<IExercise[]>([]);
 
+  // UseEffect that sets all Exercise names in the database and the input to
+  // lowercase while filtering them
   useEffect(() => {
     setFilteredExercises(
       exercises.filter((exercise) =>
@@ -25,6 +31,7 @@ const SearchExercise: React.FC<SearchExerciseProps> = ({
     );
   }, [search, exercises]);
 
+  // Mapping out the results from the filtered exercises
   const searchResults = filteredExercises?.map((exercise) => {
     return (
       <div
@@ -37,8 +44,10 @@ const SearchExercise: React.FC<SearchExerciseProps> = ({
     );
   });
 
+  // JSX
   return (
     <>
+    {/* Input filed for search */}
       <Input
         label="Search exercise"
         placeholder="Search exercise..."
@@ -46,18 +55,19 @@ const SearchExercise: React.FC<SearchExerciseProps> = ({
           setSearch(e.target.value)
         }
       />
+      {/* Text and button shown if there are no Exercises in the database */}
       {!loading && exercises.length === 0 && (
         <div style={{ padding: "12px" }}>
           <p style={{ fontStyle: "italic" }}>
             No exercises to choose, why not create one?
           </p>
-          {/* TODO: Do something with the click here? */}
           <Button style={{ backgroundColor: "orange" }} onClick={onCreateNewExercise}>
             Create new exercise
           </Button>
         </div>
       )}
 
+        {/* Text and button shown if there were no matching results from the search */}
       {!loading && filteredExercises.length === 0 ? (
         <div style={{ padding: "12px" }}>
           <p style={{ fontStyle: "italic" }}>

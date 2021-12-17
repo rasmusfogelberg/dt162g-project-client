@@ -1,5 +1,6 @@
 const API_URL = "http://localhost:3001/exercises";
 
+// Using the verb POST to create a new Exercise
 export const createExercise = async (name: string) => {
   try {
     const response = await fetch(API_URL, {

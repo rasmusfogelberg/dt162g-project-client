@@ -2,37 +2,21 @@ import { useNavigate } from "react-router";
 
 import "./workout.css";
 
+import { IExercise } from "../../components/Exercise/Exercise";
+import { calculateTotalWeight, calculateTotalSets, kilosToTons } from "../../helpers/converters";
+
+
+export interface IWorkout {
+  _id: string;
+  name: string;
+  exercises: IExercise[];
+}
+
 interface WorkoutProps {
   workoutId: string;
   name: string;
   exercises: any[];
 }
-
-const kilosToTons = (kilos: number) => {
-  return kilos / 1000;
-};
-
-const calculateTotalWeight = (exercises: any) => {
-  let totalWeight = 0;
-
-  exercises.forEach((exercise: any) => {
-    exercise.sets.forEach((set: any) => {
-      totalWeight = totalWeight + set.reps * set.weight;
-    });
-  });
-
-  return totalWeight;
-};
-
-const calculateTotalSets = (exercises: any) => {
-  let totalSets = 0;
-
-  exercises.forEach((exercise: any) => {
-    totalSets = totalSets + exercise.sets.length;
-  });
-
-  return totalSets;
-};
 
 const Workout: React.FC<WorkoutProps> = ({ workoutId, name, exercises }) => {
   const navigate = useNavigate();

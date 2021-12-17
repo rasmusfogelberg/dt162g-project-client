@@ -6,13 +6,29 @@ import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 import DefaultLayout from "../../layouts/DefaultLayout";
 
 import Exercise, { IExercise } from "../../components/Exercise/Exercise";
-import Button from "../../components/UI/Button/Button";
 
+/*
+ * "View" for a single workout when clicked in the archives
+ *
+ */
+
+const styles = {
+  header: {
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+};
+
+// Using states
 function ArchiveItemPage() {
-  const [locked, setLocked] = useState(false);
+  const [locked, setLocked] = useState(true);
   const { workoutId } = useParams();
   const [workout, setWorkout] = useState<any>(null);
 
+  // UseEffect that will load the workout from the provided ID when
+  // the component is "mounted". When something is updated React
+  // will update the workouts content accordingly
   useEffect(() => {
     const API_URL = `http://localhost:3001/workouts/${workoutId}`;
     const fetchData = async () => {
@@ -27,18 +43,12 @@ function ArchiveItemPage() {
     fetchData();
   }, [workoutId]);
 
+  // JSX code for the layout of the page
   return (
     <DefaultLayout>
       {workout && (
         <>
-          <header
-            style={{
-              display: "flex",
-              flex: "1",
-              justifyContent: "flex-start",
-              alignItems: "center",
-            }}
-          >
+          <header style={styles.header}>
             <h2>
               {workout.name}{" "}
               <FontAwesomeIcon
@@ -53,7 +63,7 @@ function ArchiveItemPage() {
               (exercise: IExercise, exerciseIndex: number) => (
                 <Exercise
                   locked={locked}
-                  key={exercise.id}
+                  key={exercise._id}
                   exercise={exercise}
                   exerciseIndex={exerciseIndex}
                 />

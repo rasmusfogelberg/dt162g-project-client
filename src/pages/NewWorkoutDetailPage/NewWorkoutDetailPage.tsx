@@ -1,6 +1,5 @@
+import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 
 import DefaultLayout from "../../layouts/DefaultLayout";
 
@@ -14,12 +13,17 @@ import SearchExercise from "./components/SearchExercise";
 
 import { getExercises } from "../../services/getExercises";
 import { createExercise } from "../../services/createExercise";
-import { updateExercise } from "../../services/updateExercise";
 import { updateWorkout } from "../../services/updateWorkout";
-import { useParams } from "react-router-dom";
+
+/* 
+ * "View" When a workout is updated(created) with new exercises
+ *
+ */
 
 function NewWorkoutDetailPage() {
   const { workoutId } = useParams();
+
+  // Setting states
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -28,6 +32,7 @@ function NewWorkoutDetailPage() {
 
   const [workoutExercises, setWorkoutExercises] = useState<any>([]);
 
+  // UseEffect to get Exercises currently in database
   useEffect(() => {
     setLoading(true);
     if (!isOpen) {
@@ -38,6 +43,7 @@ function NewWorkoutDetailPage() {
     }
   }, [isOpen]);
 
+  // OnClick when saving new exercise to database
   const handleOnSaveNewExercise = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
@@ -48,6 +54,7 @@ function NewWorkoutDetailPage() {
     }
   };
 
+  // OnClick to add a Exercise to a Workout
   const handleAddExerciseToWorkout = (exercise: any) => {
     if (
       workoutExercises.filter(
@@ -66,6 +73,7 @@ function NewWorkoutDetailPage() {
     ]);
   };
 
+  // OnClick to delete an Exercise from a Workout
   const handleDeleteExercise = (exerciseIndex: number) => {
     let newExercises = [...workoutExercises];
 
@@ -78,6 +86,7 @@ function NewWorkoutDetailPage() {
     setWorkoutExercises(filteredExercises);
   };
 
+  // OnClick to add a Set to an Exercise that is in a Workout
   const handleAddExerciseSetToWorkout = (
     workoutExercise: any,
     exerciseIndex: number
@@ -99,23 +108,24 @@ function NewWorkoutDetailPage() {
     // Yet again, make a copy of all the current exercises in the state
     const newExercises = [...workoutExercises];
 
-    // Now, given the current index of the exercise that we've added a new set to,
-    // replace that with our new copy of the exercise
+    // Now, given the current index of the exercise that has added a new set to,
+    // replace that with the new copy of the exercise
     newExercises[exerciseIndex] = newExercise;
 
-    // Update the state with our updated copy of all the exercises
+    // Update the state with the updated copy of all the exercises
     setWorkoutExercises(newExercises);
   };
 
+  // OnClick to delete a single Set from an Exercise
   const handleDeleteSet = (
-    workoutExercise: any,
+    workoutExercise: IExercise,
     exerciseIndex: number,
     setIndex: number
   ) => {
     const newExercise = { ...workoutExercise };
 
     newExercise.sets = newExercise.sets.filter(
-      (set: any, index: number) => setIndex !== index
+      (_set: ISet, index: number) => setIndex !== index
     );
 
     const newExercises = [...workoutExercises];
@@ -125,6 +135,7 @@ function NewWorkoutDetailPage() {
     setWorkoutExercises(newExercises);
   };
 
+  // Onclick that will update the set for the Exercise in the Workout
   const handleUpdateWorkoutSet = (
     workoutExercise: IExercise,
     exerciseIndex: number,
@@ -143,19 +154,16 @@ function NewWorkoutDetailPage() {
     setWorkoutExercises(newExercises);
   }
 
-
+  // Since the Workout was previously created this will just update the workout
+  // with the created Exercises and their sets
   const handleUpdateWorkout = (workoutId: string) => {
     updateWorkout(workoutId, workoutExercises);
-    debugger;
-  
-    
-    // Profit
-   
   };
   
 
   return (
     <DefaultLayout>
+      {/* Modal that is shown when creating a new Exercise */}
       <Modal opened={isOpen} close={() => setIsOpen(false)}>
         <Input
           label="Name the exercise"
@@ -165,6 +173,7 @@ function NewWorkoutDetailPage() {
           }
           value={newExerciseName}
         />
+        {/* Button to save the created Exercise in the modal to the database */}
         <Button
           style={{ backgroundColor: "forestgreen", color: "whitesmoke" }}
           onClick={handleOnSaveNewExercise}
@@ -177,6 +186,7 @@ function NewWorkoutDetailPage() {
         <div
           style={{ display: "flex", flexDirection: "column", width: "100%" }}
         >
+          {/* Search component that is used to search for Exercises in the database */}
           <SearchExercise
             onCreateNewExercise={() => setIsOpen(!isOpen)}
             onSelectExercise={(exercise: any) =>
@@ -195,9 +205,11 @@ function NewWorkoutDetailPage() {
                     <Exercise
                       exercise={workoutExercise}
                       exerciseIndex={exerciseIndex}
+                      /* Onclick to delete the Exercise */
                       onDeleteExercise={() =>
                         handleDeleteExercise(exerciseIndex)
                       }
+                      /* OnClick to delete the Set */
                       onDeleteSet={(workoutExercise, exerciseIndex, setIndex) =>
                         handleDeleteSet(
                           workoutExercise,
@@ -205,6 +217,7 @@ function NewWorkoutDetailPage() {
                           setIndex
                         )
                       }
+                      /* OnClick to add a set to the Exercise in the Workout */
                       onAddSet={() =>
                         handleAddExerciseSetToWorkout(
                           workoutExercise,
@@ -229,12 +242,13 @@ function NewWorkoutDetailPage() {
                 )}
               </div>
               {workoutId && (
+                /* Button to save all the changes in the Workout */
                 <Button
                   onClick={() => {
                     handleUpdateWorkout(workoutId);
                   }}
                 >
-                  Save the damn thing
+                  Save Workout
                 </Button>
               )}
             </>
