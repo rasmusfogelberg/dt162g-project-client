@@ -18,6 +18,7 @@ import { createExercise } from "../../../services/createExercise";
 import { updateWorkout } from "../../../services/updateWorkout";
 import { getWorkout } from "../../../services/getWorkout";
 import { deleteExercise } from "../../../services/deleteExercise";
+import { Timer } from "../../../components/Timer/Timer";
 
 /*
  * "View" When a workout is updated(created) with new exercises
@@ -27,6 +28,10 @@ import { deleteExercise } from "../../../services/deleteExercise";
 function WorkoutDetailPage() {
   const { workoutId } = useParams();
   const navigate = useNavigate();
+
+  // TODO REMOVE ME
+  const date = new Date();
+  date.setHours(date.getHours() + 1);
 
   // Setting states
   const [isOpen, setIsOpen] = useState(false);
@@ -245,6 +250,7 @@ function WorkoutDetailPage() {
         >
           <header style={{ padding: "0 12px", marginBottom: "1em" }}>
             <h2>{workoutName}</h2>
+            <Timer />
           </header>
 
           {/* Search component that is used to search for Exercises in the database */}
