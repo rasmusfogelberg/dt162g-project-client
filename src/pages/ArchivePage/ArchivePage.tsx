@@ -56,17 +56,19 @@ function ArchivePage() {
   return (
     <DefaultLayout>
       <div className="workoutsWrapper">
-        {workouts.map((workout: IWorkout) => (
-          <Workout
-            key={workout._id}
-            workoutId={workout._id}
-            name={workout.name}
-            exercises={workout.exercises}
-            onDeleteWorkout={(workoutId: string) =>
-              handleDeleteWorkout(workoutId)
-            }
-          />
-        ))}
+        {workouts.length === 0 && (
+          <h3>There's no history here, why don't you go and workout?</h3>
+        )}
+        {workouts.length > 0 &&
+          workouts.map((workout: IWorkout) => workout.endedDate && (
+            <Workout
+              key={workout._id}
+              workout={workout}
+              onDeleteWorkout={(workoutId: string) =>
+                handleDeleteWorkout(workoutId)
+              }
+            />
+          ))}
       </div>
     </DefaultLayout>
   );

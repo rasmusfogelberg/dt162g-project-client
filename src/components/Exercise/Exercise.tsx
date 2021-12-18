@@ -25,7 +25,7 @@ interface IExerciseProps {
     setIndex: number
   ) => void;
   onAddSet?: (exercise: IExercise, exerciseIndex: number) => void;
-  
+
   onUpdateSet?: (
     exercise: IExercise,
     exerciseIndex: number,
@@ -43,7 +43,7 @@ const Exercise: React.FC<IExerciseProps> = ({
   onAddSet,
   onUpdateSet,
 }) => {
-  const { _id, name, sets } = exercise;
+  const { name, sets } = exercise;
   return (
     <div key={uuidv4()} className="workoutExerciseRow">
       <header>
@@ -58,7 +58,7 @@ const Exercise: React.FC<IExerciseProps> = ({
       </header>
       {sets?.map((set: ISet, setIndex: number) => (
         <Set
-          key={set.id}
+          key={uuidv4()}
           locked={locked}
           set={set}
           setIndex={setIndex}

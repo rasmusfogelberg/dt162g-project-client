@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 
@@ -26,7 +24,7 @@ const Set: React.FC<ISetProps> = ({
   onDeleteSet,
   onUpdateSet,
 }) => {
-  const { id, weight, reps } = set;
+  const { weight, reps } = set;
 
   return (
     <div className="content">

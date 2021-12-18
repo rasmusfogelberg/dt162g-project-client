@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import "./input.css";
 
 const Input: React.FC<any & React.InputHTMLAttributes<HTMLInputElement>> = ({

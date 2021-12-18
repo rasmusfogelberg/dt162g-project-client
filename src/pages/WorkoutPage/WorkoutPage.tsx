@@ -23,7 +23,7 @@ function WorkoutPage() {
       return;
     }
 
-    createWorkout(workoutName).then((response: any) => {
+    createWorkout(workoutName, Date.now()).then((response: any) => {
       // Navigate to detail view for newly created workout
       toast.success('Successfully created workout');
       navigate(`/new/${response.workout._id}`);
@@ -45,7 +45,7 @@ function WorkoutPage() {
             setWorkoutName(e.target.value)
           }
         />
-        <Button type="submit">Add workout</Button>
+        <Button type="submit">Start a workout</Button>
       </Form>
     </DefaultLayout>
   );

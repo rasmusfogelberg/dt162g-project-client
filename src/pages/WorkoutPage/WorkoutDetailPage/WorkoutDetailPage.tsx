@@ -28,10 +28,7 @@ import { Timer } from "../../../components/Timer/Timer";
 function WorkoutDetailPage() {
   const { workoutId } = useParams();
   const navigate = useNavigate();
-
-  // TODO REMOVE ME
-  const date = new Date();
-  date.setHours(date.getHours() + 1);
+  const { pathname } = useLocation();
 
   // Setting states
   const [isOpen, setIsOpen] = useState(false);
@@ -41,10 +38,10 @@ function WorkoutDetailPage() {
   const [exercises, setExercises] = useState<IExercise[]>([]);
   const [newExerciseName, setNewExerciseName] = useState<string>("");
 
+  const [workoutStartedDate, setWorkoutStartedDate] = useState<number>(0);
+  const [workoutEndedDate, setWorkoutEndedDate] = useState<number | null>(null);
   const [workoutExercises, setWorkoutExercises] = useState<IExercise[]>([]);
   const [workoutName, setWorkoutName] = useState<string>("");
-
-  const { pathname } = useLocation();
 
   // UseEffect to get Exercises currently in database
   useEffect(() => {
@@ -58,6 +55,8 @@ function WorkoutDetailPage() {
             if (!workout) {
               throw new Error("Workout not found");
             }
+            setWorkoutStartedDate(workout.startedDate);
+            setWorkoutEndedDate(workout.endedDate || null);
             setWorkoutName(workout.name);
             setWorkoutExercises(workout.exercises); // sets the current active workouts exercises
             setLoading(false);
@@ -68,7 +67,7 @@ function WorkoutDetailPage() {
           });
       });
     }
-  }, [isOpen]); // <-- This triggers the useEffect, provided this value changes
+  }, [isOpen, navigate, workoutId]);
 
   useEffect(() => {
     getExercises().then((exercises) => {
@@ -85,9 +84,9 @@ function WorkoutDetailPage() {
       await createExercise(newExerciseName);
       setIsOpen(false);
       setNewExerciseName("");
-      toast.success('Successfully created new exercise');
+      toast.success("Successfully created new exercise");
     } catch (error) {
-      toast.error('Error while creating new exercise');
+      toast.error("Error while creating new exercise");
       console.error("Error while creating new exercise", error);
     }
   };
@@ -99,7 +98,7 @@ function WorkoutDetailPage() {
         (workoutExercise: any) => workoutExercise._id === exercise._id
       ).length > 0
     ) {
-      toast.error('Could not add exercise to workout');
+      toast.error("Could not add exercise to workout");
       return;
     }
     setWorkoutExercises([
@@ -110,7 +109,7 @@ function WorkoutDetailPage() {
         sets: [{ id: uuidv4(), weight: 0, reps: 0 }],
       },
     ]);
-    toast.success('Added exercise successfully');
+    toast.success("Added exercise successfully");
   };
 
   // OnClick to delete an Exercise from a Workout
@@ -130,9 +129,9 @@ function WorkoutDetailPage() {
     if (!exerciseId) return;
     try {
       const isDeleted = await deleteExercise(exerciseId);
-      toast.success('Successfully deleted exercise');
+      toast.success("Successfully deleted exercise");
       if (!isDeleted) {
-        toast.error('Could not delete exercise');
+        toast.error("Could not delete exercise");
         return;
       }
       setRefetch(true);
@@ -199,7 +198,6 @@ function WorkoutDetailPage() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const newExercise = { ...workoutExercise };
-    const newSets = [...newExercise.sets];
 
     //@ts-ignore
     newExercise.sets[setIndex][event.target.name] = Number(event.target.value);
@@ -214,13 +212,24 @@ function WorkoutDetailPage() {
   // with the created Exercises and their sets
   const handleUpdateWorkout = (workoutId: string) => {
     let message =
-      pathname.split("/")[1] === "new" ? `Created workout` : "Updated workout";
+      pathname.split("/")[1] === "new" ? `Finished workout` : "Updated workout";
 
-    toast.promise(updateWorkout(workoutId, workoutExercises), {
-      loading: "Saving...",
-      success: message,
-      error: "Workout could not be saved",
-    });
+    toast.promise(
+      updateWorkout(
+        workoutId,
+        workoutName,
+        workoutExercises,
+        workoutStartedDate,
+        Date.now()
+      ),
+      {
+        loading: "Saving...",
+        success: message,
+        error: "Workout could not be saved",
+      }
+    );
+
+    navigate("/archive");
   };
 
   return (
@@ -250,7 +259,8 @@ function WorkoutDetailPage() {
         >
           <header style={{ padding: "0 12px", marginBottom: "1em" }}>
             <h2>{workoutName}</h2>
-            <Timer />
+            {!workoutEndedDate && <Timer />}
+            <p style={{ paddingTop: "12px" }}>Add exercises to your workout</p>
           </header>
 
           {/* Search component that is used to search for Exercises in the database */}
@@ -270,6 +280,7 @@ function WorkoutDetailPage() {
             <>
               <div style={{ padding: "12px", marginTop: "18px" }}>
                 <h2>Exercises</h2>
+                <p>Fill out what you have done on your exercises</p>
                 {workoutExercises?.map(
                   (workoutExercise: IExercise, exerciseIndex: number) => (
                     <Exercise
@@ -319,7 +330,7 @@ function WorkoutDetailPage() {
                     handleUpdateWorkout(workoutId);
                   }}
                 >
-                  Save Workout
+                  Finish and save Workout
                 </Button>
               )}
             </>
