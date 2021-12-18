@@ -1,5 +1,11 @@
 import "./input.css";
 
+/** 
+ * Input component
+ *   
+ * 
+ */
+
 const Input: React.FC<any & React.InputHTMLAttributes<HTMLInputElement>> = ({
   name,
   label,

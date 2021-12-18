@@ -7,17 +7,26 @@ import "./exercise.css";
 
 import Set, { ISet } from "../Set/Set";
 
+/** 
+ * The Exercise component
+ *   
+ * 
+ */
+
+// An interface that structures what a Exercise contains
 export interface IExercise {
   _id: string;
   name: string;
   sets: ISet[];
 }
 
+// An interface that structures what Exercise-props contains
 interface IExerciseProps {
   locked?: boolean;
   exercise: IExercise;
   exerciseIndex: number;
 
+  // Details what information is needed for handles
   onDeleteExercise?: (exerciseIndex: number) => void;
   onDeleteSet?: (
     exercise: IExercise,
@@ -34,6 +43,7 @@ interface IExerciseProps {
   ) => void;
 }
 
+// Structures the layout of an Exercise
 const Exercise: React.FC<IExerciseProps> = ({
   locked = false,
   exercise,
@@ -56,6 +66,7 @@ const Exercise: React.FC<IExerciseProps> = ({
           />
         )}
       </header>
+      {/* The Set component that is used in the exercise */}
       {sets?.map((set: ISet, setIndex: number) => (
         <Set
           key={uuidv4()}

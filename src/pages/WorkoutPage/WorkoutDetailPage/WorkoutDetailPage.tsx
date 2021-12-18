@@ -258,9 +258,9 @@ function WorkoutDetailPage() {
           style={{ display: "flex", flexDirection: "column", width: "100%" }}
         >
           <header style={{ padding: "0 12px", marginBottom: "1em" }}>
-            <h2>{workoutName}</h2>
-            {!workoutEndedDate && <Timer />}
-            <p style={{ paddingTop: "12px" }}>Add exercises to your workout</p>
+            <h2 style={{ paddingBottom: "12px"}}>{workoutName}</h2>
+            Workout duration: {!workoutEndedDate && <Timer />}
+            <p style={{ paddingTop: "12px" }}>Search for an exercise to add to this workout</p>
           </header>
 
           {/* Search component that is used to search for Exercises in the database */}
@@ -280,7 +280,7 @@ function WorkoutDetailPage() {
             <>
               <div style={{ padding: "12px", marginTop: "18px" }}>
                 <h2>Exercises</h2>
-                <p>Fill out what you have done on your exercises</p>
+                <p>Enter weight and reps for each of your exercises</p>
                 {workoutExercises?.map(
                   (workoutExercise: IExercise, exerciseIndex: number) => (
                     <Exercise

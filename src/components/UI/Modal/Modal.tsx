@@ -8,6 +8,14 @@ import Button from "../Button/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 
+/** 
+ * Modal component
+ *   
+ * The modal is the overlay of the website when a user
+ * creates a new workout or confirms the deletion of a workout
+ * 
+ */
+
 interface ModalProps {
   opened: boolean;
   close: () => void;

@@ -1,5 +1,11 @@
 import './button.css';
 
+/** 
+ * Button component
+ *   
+ * 
+ */
+
 interface ButtonProps {
   children: React.ReactNode | React.ReactNode[]
   onClick?: (e?: any) => void

@@ -15,6 +15,13 @@ import Modal from "../UI/Modal/Modal";
 import { useState } from "react";
 import Button from "../UI/Button/Button";
 
+/** 
+ * The Workout component
+ *   
+ * 
+ */
+
+// An interface that structures what a Workout contains
 export interface IWorkout {
   _id: string;
   name: string;
@@ -23,11 +30,13 @@ export interface IWorkout {
   exercises: IExercise[];
 }
 
+// An interface that structures what Workout-props contains
 interface WorkoutProps {
   workout: IWorkout;
   onDeleteWorkout?: (workoutId: string) => void;
 }
 
+// Structures the layout of a Workout and what handlers/functions it contains
 const Workout: React.FC<WorkoutProps> = ({ workout, onDeleteWorkout }) => {
   const { _id: workoutId, name, startedDate, endedDate, exercises } = workout;
 

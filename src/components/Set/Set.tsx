@@ -3,12 +3,20 @@ import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 
 import { Input } from "../UI";
 
+/** 
+ * Set component
+ *   
+ * 
+ */
+
+// An interface that structures what a Set contains
 export interface ISet {
   id?: string;
   weight: number;
   reps: number;
 }
 
+// An interface that structures what Set-props contains
 interface ISetProps {
   locked?: boolean;
   set: ISet;
@@ -17,6 +25,7 @@ interface ISetProps {
   onUpdateSet: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+// Structures the layout for sets
 const Set: React.FC<ISetProps> = ({
   locked = false,
   set,

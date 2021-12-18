@@ -1,6 +1,12 @@
 import { IExercise } from "../components/Exercise/Exercise";
 import { ISet } from "../components/Set/Set";
 
+/** 
+ * Helper that will make calculations for overview of a completed workout
+ *   
+ * 
+ */
+
 export const kilosToTons = (kilos: number) => {
   return kilos / 1000;
 };

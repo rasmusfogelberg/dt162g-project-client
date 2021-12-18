@@ -5,6 +5,13 @@ import BurgerMenu from "../UI/BurgerMenu/BurgerMenu";
 
 import "./mainNav.css";
 
+/** 
+ * Navigation component
+ *   
+ * 
+ */
+
+// Checks if the menu is open or not in responsive mode
 function MainNav() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -12,6 +19,7 @@ function MainNav() {
     setIsOpen(!isOpen);
   }
 
+  // JSX
   return (
     <header className="fixedWrapper">
       <div className="logoWrapper">

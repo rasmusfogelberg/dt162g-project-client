@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 
+/** 
+ * Timer component
+ *   
+ * Displays the ticking time for a workout
+ * 
+ */
+
 // Formating the time that is displayed
 export const formatTime = (timer: any) => {
   const getSeconds: any = `0${(timer % 60)}`.slice(-2)
