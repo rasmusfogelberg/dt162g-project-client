@@ -232,6 +232,7 @@ function WorkoutDetailPage() {
     navigate("/archive");
   };
 
+  // JSX
   return (
     <DefaultLayout>
       {/* Modal that is shown when creating a new Exercise */}
@@ -330,7 +331,7 @@ function WorkoutDetailPage() {
                     handleUpdateWorkout(workoutId);
                   }}
                 >
-                  Finish and save Workout
+                  Finish and save
                 </Button>
               )}
             </>
