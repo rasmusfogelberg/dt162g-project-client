@@ -13,7 +13,7 @@ export const formatTime = (timer: any) => {
 // Setting up the timer
 const useTimer = (offset = 0, autostart = true) => {
   const [timer, setTimer] = useState(offset);
-  const [isActive, setIsActive] = useState(autostart);
+  const [isActive] = useState(autostart);
   const countRef = useRef<any>(null);
 
   // Autostarting the timer

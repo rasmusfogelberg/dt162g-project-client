@@ -18,22 +18,19 @@ import Button from "../UI/Button/Button";
 export interface IWorkout {
   _id: string;
   name: string;
+  startedDate: number;
+  endedDate?: number;
   exercises: IExercise[];
 }
 
 interface WorkoutProps {
-  workoutId: string;
-  name: string;
-  exercises: IExercise[];
+  workout: IWorkout;
   onDeleteWorkout?: (workoutId: string) => void;
 }
 
-const Workout: React.FC<WorkoutProps> = ({
-  workoutId,
-  name,
-  exercises,
-  onDeleteWorkout,
-}) => {
+const Workout: React.FC<WorkoutProps> = ({ workout, onDeleteWorkout }) => {
+  const { _id: workoutId, name, startedDate, endedDate, exercises } = workout;
+
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -81,7 +78,10 @@ const Workout: React.FC<WorkoutProps> = ({
         />
         <div className="workoutItemContent" onClick={handleSelectWorkout}>
           <header className="workoutIemName">{name}</header>
-          <div className="workoutItemDate">2021-12-19 at 05:52 - 07:10</div>
+          <div className="workoutItemDate">
+            {startedDate && new Date(startedDate).toLocaleString()} -{" "}
+            {endedDate && new Date(endedDate).toLocaleString()}
+          </div>
           <div className="exercisesWrapper">
             <div style={{ fontWeight: "bold" }}>Total lifted:</div>{" "}
             {totalLiftedWeight > 1000
