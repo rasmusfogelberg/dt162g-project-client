@@ -1,9 +1,17 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { ReactComponent as Logo } from "../../assets/svg/logo-getfit.svg";
+import BurgerMenu from "../UI/BurgerMenu/BurgerMenu";
 
 import "./mainNav.css";
 
 function MainNav() {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  function handleToggleOpen() {
+    setIsOpen(!isOpen);
+  }
+
   return (
     <header className="fixedWrapper">
       <div className="logoWrapper">
@@ -12,9 +20,10 @@ function MainNav() {
         </NavLink>
       </div>
       <nav className="navWrapper">
-        <ul>
+        <BurgerMenu open={isOpen} onToggleOpen={handleToggleOpen} />
+        <ul className={`navBar ${isOpen ? "open" : ""}`}>
           <li>
-            <NavLink to="/">New Workout</NavLink>
+            <NavLink to="/">Start a workout</NavLink>
           </li>
           <li>
             <NavLink to="/archive">Archive</NavLink>

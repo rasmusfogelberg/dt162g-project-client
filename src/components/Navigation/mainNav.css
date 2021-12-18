@@ -9,6 +9,8 @@
   transition: top 0.3s ease;
   font-size: 1.2rem;
   height: 4em;
+  justify-content: space-between;
+  padding-right: 18px;
 }
 
 .logoWrapper {
@@ -83,4 +85,17 @@ a {
 
 a:hover {
   color: aqua;
+}
+
+@media screen and (max-width: 764px) {
+  .navBar {
+    position: fixed;
+    display: flex;
+    transform: translateY(-100%);
+  }
+
+  .navBar.open {
+    transform: translateY(0%);
+  }
+  
 }
