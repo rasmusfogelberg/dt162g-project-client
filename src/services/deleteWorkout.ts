@@ -11,6 +11,6 @@ export const deleteWorkout = async (id: string) => {
 
     return response.ok;
   } catch (error) {
-    console.log("error ", error);
+    console.error("error ", error);
   }
 };

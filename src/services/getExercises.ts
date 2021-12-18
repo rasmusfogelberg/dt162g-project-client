@@ -12,6 +12,6 @@ export const getExercises = async () => {
     const json = await response.json();
     return json;
   } catch (error) {
-    console.log("Error", error);
+    console.error("Error", error);
   }
 };

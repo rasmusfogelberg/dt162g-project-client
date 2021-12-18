@@ -18,6 +18,6 @@ export const updateExercise = async (id: string, name: string, sets: ISet[]) => 
     const json = await response.json();
     return json;
   } catch (error) {
-    console.log("error ", error);
+    console.error("error ", error);
   }
 };
