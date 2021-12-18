@@ -42,7 +42,7 @@ const Workout: React.FC<WorkoutProps> = ({
 
   const handleSelectWorkout = () => {
     if (!workoutId) return;
-    navigate(`/archive/${workoutId}`);
+    navigate(`/edit/${workoutId}`);
   };
 
   return (

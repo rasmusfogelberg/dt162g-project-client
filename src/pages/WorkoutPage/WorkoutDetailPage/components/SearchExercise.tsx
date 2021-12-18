@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Input, Button } from "../../../components/UI";
-import { IExercise } from "../../../components/Exercise/Exercise";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
+
+import { IExercise } from "../../../../components/Exercise/Exercise";
+import { Input, Button } from "../../../../components/UI";
 
 // Interface for the search
 interface SearchExerciseProps {
   onCreateNewExercise: () => void;
-  onSelectExercise: (exercise: any) => void;
+  onSelectExercise: (exercise: IExercise) => void;
+  onDeleteExercise: (exerciseId: string) => void;
   loading: boolean;
   exercises: any[];
 }
@@ -13,6 +17,7 @@ interface SearchExerciseProps {
 const SearchExercise: React.FC<SearchExerciseProps> = ({
   onCreateNewExercise,
   onSelectExercise,
+  onDeleteExercise,
   loading,
   exercises,
 }) => {
@@ -40,6 +45,14 @@ const SearchExercise: React.FC<SearchExerciseProps> = ({
         onClick={() => onSelectExercise(exercise)}
       >
         {exercise.name}
+        <FontAwesomeIcon
+          icon={solid("trash-alt")}
+          style={{ alignSelf: "center", cursor: "pointer" }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDeleteExercise && onDeleteExercise(exercise._id)
+          }}
+        />
       </div>
     );
   });

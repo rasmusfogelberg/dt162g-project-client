@@ -4,6 +4,7 @@ import "./archive.css";
 import Workout, { IWorkout } from "../../components/Workout/Workout";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import { deleteWorkout } from "../../services/deleteWorkout";
+import toast from "react-hot-toast";
 
 /*
  * "View" for a all the workouts in the database
@@ -18,7 +19,7 @@ const fetchData = async () => {
     const json = await response.json();
     return json;
   } catch (error) {
-    console.log("error ", error);
+    console.error("error ", error);
   }
 };
 
@@ -43,9 +44,11 @@ function ArchivePage() {
       if (!isDeleted) {
         return;
       }
+      toast.success('Successfully deleted archived workout');
       setRefetch(true);
     } catch (error) {
-      console.log("Error while deleting workout", error);
+      toast.error("Error while deleting archived workout");
+      console.error("Error while deleting workout", error);
     }
   };
 

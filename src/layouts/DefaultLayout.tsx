@@ -1,4 +1,5 @@
 import React from "react";
+import { Toaster } from "react-hot-toast";
 
 import MainNav from "../components/Navigation/MainNav";
 import './default-layout.css';
@@ -14,7 +15,7 @@ const DefaultLayout: React.FC<any> = ({ children }) => {
       <div className="headerWrapper">
         <MainNav />
       </div>
-
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="wrapper">{children}</div>
     </>
   );

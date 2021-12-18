@@ -1,48 +1,77 @@
-import { useParams } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import toast from "react-hot-toast";
 
-import DefaultLayout from "../../layouts/DefaultLayout";
+import Modal from "../../../components/UI/Modal/Modal";
+import DefaultLayout from "../../../layouts/DefaultLayout";
 
-import Modal from "../../components/UI/Modal/Modal";
-import { Button, Input } from "../../components/UI/";
-
-import Exercise, { IExercise } from "../../components/Exercise/Exercise";
-import { ISet } from "../../components/Set/Set";
+import { Button, Input } from "../../../components/UI/";
+import { ISet } from "../../../components/Set/Set";
 
 import SearchExercise from "./components/SearchExercise";
+import { IWorkout } from "../../../components/Workout/Workout";
+import Exercise, { IExercise } from "../../../components/Exercise/Exercise";
 
-import { getExercises } from "../../services/getExercises";
-import { createExercise } from "../../services/createExercise";
-import { updateWorkout } from "../../services/updateWorkout";
+import { getExercises } from "../../../services/getExercises";
+import { createExercise } from "../../../services/createExercise";
+import { updateWorkout } from "../../../services/updateWorkout";
+import { getWorkout } from "../../../services/getWorkout";
+import { deleteExercise } from "../../../services/deleteExercise";
 
 /*
  * "View" When a workout is updated(created) with new exercises
  *
  */
 
-function NewWorkoutDetailPage() {
+function WorkoutDetailPage() {
   const { workoutId } = useParams();
+  const navigate = useNavigate();
 
   // Setting states
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [refetch, setRefetch] = useState(false);
 
-  const [exercises, setExercises] = useState<any[]>([]);
-  const [newExerciseName, setNewExerciseName] = useState("");
+  const [exercises, setExercises] = useState<IExercise[]>([]);
+  const [newExerciseName, setNewExerciseName] = useState<string>("");
 
-  const [workoutExercises, setWorkoutExercises] = useState<any>([]);
+  const [workoutExercises, setWorkoutExercises] = useState<IExercise[]>([]);
+  const [workoutName, setWorkoutName] = useState<string>("");
+
+  const { pathname } = useLocation();
 
   // UseEffect to get Exercises currently in database
   useEffect(() => {
+    // Runs once when the component is mounted, and then for every subsequent change to isOpen
     setLoading(true);
-    if (!isOpen) {
+    if (!isOpen && workoutId) {
       getExercises().then((exercises) => {
-        setExercises(exercises);
-        setLoading(false);
+        setExercises(exercises); // All the exercises, needed for search
+        getWorkout(workoutId)
+          .then((workout: IWorkout) => {
+            if (!workout) {
+              throw new Error("Workout not found");
+            }
+            setWorkoutName(workout.name);
+            setWorkoutExercises(workout.exercises); // sets the current active workouts exercises
+            setLoading(false);
+          })
+          .catch((error) => {
+            toast.error(error.message);
+            return navigate("/");
+          });
       });
     }
-  }, [isOpen]);
+  }, [isOpen]); // <-- This triggers the useEffect, provided this value changes
+
+  useEffect(() => {
+    getExercises().then((exercises) => {
+      setExercises(exercises);
+      setRefetch(false);
+      setLoading(false);
+    });
+  }, [refetch]);
 
   // OnClick when saving new exercise to database
   const handleOnSaveNewExercise = async (event: React.FormEvent) => {
@@ -51,8 +80,10 @@ function NewWorkoutDetailPage() {
       await createExercise(newExerciseName);
       setIsOpen(false);
       setNewExerciseName("");
+      toast.success('Successfully created new exercise');
     } catch (error) {
-      console.log("Error while creating new exercise", error);
+      toast.error('Error while creating new exercise');
+      console.error("Error while creating new exercise", error);
     }
   };
 
@@ -60,9 +91,10 @@ function NewWorkoutDetailPage() {
   const handleAddExerciseToWorkout = (exercise: any) => {
     if (
       workoutExercises.filter(
-        (workoutExercise: any) => workoutExercise.id === exercise._id
+        (workoutExercise: any) => workoutExercise._id === exercise._id
       ).length > 0
     ) {
+      toast.error('Could not add exercise to workout');
       return;
     }
     setWorkoutExercises([
@@ -73,6 +105,7 @@ function NewWorkoutDetailPage() {
         sets: [{ id: uuidv4(), weight: 0, reps: 0 }],
       },
     ]);
+    toast.success('Added exercise successfully');
   };
 
   // OnClick to delete an Exercise from a Workout
@@ -86,6 +119,21 @@ function NewWorkoutDetailPage() {
     );
 
     setWorkoutExercises(filteredExercises);
+  };
+
+  const handleDeleteSavedExercise = async (exerciseId: string) => {
+    if (!exerciseId) return;
+    try {
+      const isDeleted = await deleteExercise(exerciseId);
+      toast.success('Successfully deleted exercise');
+      if (!isDeleted) {
+        toast.error('Could not delete exercise');
+        return;
+      }
+      setRefetch(true);
+    } catch (error) {
+      console.error("Error while deleting workout", error);
+    }
   };
 
   // OnClick to add a Set to an Exercise that is in a Workout
@@ -160,7 +208,14 @@ function NewWorkoutDetailPage() {
   // Since the Workout was previously created this will just update the workout
   // with the created Exercises and their sets
   const handleUpdateWorkout = (workoutId: string) => {
-    updateWorkout(workoutId, workoutExercises);
+    let message =
+      pathname.split("/")[1] === "new" ? `Created workout` : "Updated workout";
+
+    toast.promise(updateWorkout(workoutId, workoutExercises), {
+      loading: "Saving...",
+      success: message,
+      error: "Workout could not be saved",
+    });
   };
 
   return (
@@ -184,11 +239,13 @@ function NewWorkoutDetailPage() {
         </Button>
       </Modal>
       {loading && <p>Loading exercises...</p>}
-      {!loading && (
+      {!loading && workoutExercises && exercises.length > 0 && (
         <div
           style={{ display: "flex", flexDirection: "column", width: "100%" }}
         >
-          <p>Workout details</p>
+          <header style={{ padding: "0 12px", marginBottom: "1em" }}>
+            <h2>{workoutName}</h2>
+          </header>
 
           {/* Search component that is used to search for Exercises in the database */}
           <SearchExercise
@@ -196,11 +253,14 @@ function NewWorkoutDetailPage() {
             onSelectExercise={(exercise: any) =>
               handleAddExerciseToWorkout(exercise)
             }
+            onDeleteExercise={(exerciseId: string) =>
+              handleDeleteSavedExercise(exerciseId)
+            }
             loading={loading}
             exercises={exercises}
           />
 
-          {workoutExercises.length > 0 && (
+          {workoutExercises && workoutExercises.length > 0 && (
             <>
               <div style={{ padding: "12px", marginTop: "18px" }}>
                 <h2>Exercises</h2>
@@ -264,4 +324,4 @@ function NewWorkoutDetailPage() {
   );
 }
 
-export default NewWorkoutDetailPage;
+export default WorkoutDetailPage;

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
 
 import { Button, Form, Input } from "../../components/UI/";
 import DefaultLayout from "../../layouts/DefaultLayout";
@@ -10,7 +11,7 @@ import { createWorkout } from "../../services/createWorkout";
  *
  */
 
-function NewWorkoutPage() {
+function WorkoutPage() {
   const navigate = useNavigate();
   const [workoutName, setWorkoutName] = useState("");
 
@@ -24,8 +25,9 @@ function NewWorkoutPage() {
 
     createWorkout(workoutName).then((response: any) => {
       // Navigate to detail view for newly created workout
+      toast.success('Successfully created workout');
       navigate(`/new/${response.workout._id}`);
-    })
+    });
   };
 
   // JSX
@@ -49,4 +51,4 @@ function NewWorkoutPage() {
   );
 }
 
-export default NewWorkoutPage;
+export default WorkoutPage;
