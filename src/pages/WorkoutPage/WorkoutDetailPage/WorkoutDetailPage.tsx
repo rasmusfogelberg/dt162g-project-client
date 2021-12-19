@@ -47,7 +47,7 @@ function WorkoutDetailPage() {
   useEffect(() => {
     // Runs once when the component is mounted, and then for every subsequent change to isOpen
     setLoading(true);
-    if (!isOpen && workoutId) {
+    if (workoutId) {
       getExercises().then((exercises) => {
         setExercises(exercises); // All the exercises, needed for search
         getWorkout(workoutId)
@@ -67,15 +67,17 @@ function WorkoutDetailPage() {
           });
       });
     }
-  }, [isOpen, navigate, workoutId]);
+  }, [navigate, workoutId]);
 
   useEffect(() => {
-    getExercises().then((exercises) => {
-      setExercises(exercises);
-      setRefetch(false);
-      setLoading(false);
-    });
-  }, [refetch]);
+    if (!isOpen || refetch) {
+      getExercises().then((exercises) => {
+        setExercises(exercises);
+        setRefetch(false);
+        setLoading(false);
+      });
+    }
+  }, [isOpen, refetch]);
 
   // OnClick when saving new exercise to database
   const handleOnSaveNewExercise = async (event: React.FormEvent) => {
@@ -224,12 +226,13 @@ function WorkoutDetailPage() {
       ),
       {
         loading: "Saving...",
-        success: message,
+        success: () => {
+          navigate("/archive");
+          return `${message}`
+        },
         error: "Workout could not be saved",
       }
     );
-
-    navigate("/archive");
   };
 
   // JSX
@@ -254,14 +257,16 @@ function WorkoutDetailPage() {
         </Button>
       </Modal>
       {loading && <p>Loading exercises...</p>}
-      {!loading && workoutExercises && exercises.length > 0 && (
+      {!loading && workoutExercises && exercises && (
         <div
           style={{ display: "flex", flexDirection: "column", width: "100%" }}
         >
           <header style={{ padding: "0 12px", marginBottom: "1em" }}>
-            <h2 style={{ paddingBottom: "12px"}}>{workoutName}</h2>
+            <h2 style={{ paddingBottom: "12px" }}>{workoutName}</h2>
             Workout duration: {!workoutEndedDate && <Timer />}
-            <p style={{ paddingTop: "12px" }}>Search for an exercise to add to this workout</p>
+            <p style={{ paddingTop: "12px" }}>
+              Search for an exercise to add to this workout
+            </p>
           </header>
 
           {/* Search component that is used to search for Exercises in the database */}

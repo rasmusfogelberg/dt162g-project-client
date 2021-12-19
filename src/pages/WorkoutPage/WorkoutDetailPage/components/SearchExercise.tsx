@@ -50,7 +50,7 @@ const SearchExercise: React.FC<SearchExerciseProps> = ({
           style={{ alignSelf: "center", cursor: "pointer" }}
           onClick={(e) => {
             e.stopPropagation();
-            onDeleteExercise && onDeleteExercise(exercise._id)
+            onDeleteExercise && onDeleteExercise(exercise._id);
           }}
         />
       </div>
@@ -61,32 +61,40 @@ const SearchExercise: React.FC<SearchExerciseProps> = ({
   return (
     <>
       {/* Input field for search */}
-      <Input
-        label="Search exercise"
-        placeholder="Search exercise..."
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setSearch(e.target.value)
-        }
-      />
+      {!loading && exercises.length > 0 && (
+        <Input
+          label="Search exercise"
+          placeholder="Search exercise..."
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setSearch(e.target.value)
+          }
+        />
+      )}
       {/* Text and button shown if there are no Exercises in the database */}
       {!loading && exercises.length === 0 && (
         <div style={{ padding: "12px" }}>
           <p style={{ fontStyle: "italic" }}>
             No exercises to choose, why not create one?
           </p>
-          <Button style={{ backgroundColor: "orange" }} onClick={onCreateNewExercise}>
+          <Button
+            style={{ backgroundColor: "orange" }}
+            onClick={onCreateNewExercise}
+          >
             Create new exercise
           </Button>
         </div>
       )}
 
       {/* Text and button shown if there were no matching results from the search */}
-      {!loading && filteredExercises.length === 0 ? (
+      {!loading && exercises.length > 0 && filteredExercises.length === 0 ? (
         <div style={{ padding: "12px" }}>
           <p style={{ fontStyle: "italic" }}>
             No matches for: <em>{search}</em>
           </p>
-          <Button style={{ backgroundColor: "orange" }} onClick={onCreateNewExercise}>
+          <Button
+            style={{ backgroundColor: "orange" }}
+            onClick={onCreateNewExercise}
+          >
             Create new exercise
           </Button>
         </div>

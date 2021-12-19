@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 
 const API_URL = "http://localhost:3001/workouts";
 
-const fetchData = async () => {
+const getWorkouts = async () => {
   try {
     const response = await fetch(API_URL);
     const json = await response.json();
@@ -25,16 +25,21 @@ const fetchData = async () => {
 
 // Setting state to an empty array
 function ArchivePage() {
+  const [loading, setLoading] = useState(false);
   const [refetch, setRefetch] = useState(false);
   const [workouts, setWorkouts] = useState([]);
 
   // UseEffect asynchronously fetches workouts from the API
   // and sets them in the current state
   useEffect(() => {
-    fetchData().then((workouts) => {
+    const fetchData = async () => {
+      setLoading(true);
+      const workouts = await getWorkouts();
       setWorkouts(workouts);
       setRefetch(false);
-    });
+      setLoading(false);
+    };
+    fetchData();
   }, [refetch]);
 
   const handleDeleteWorkout = async (workoutId: string) => {
@@ -44,7 +49,7 @@ function ArchivePage() {
       if (!isDeleted) {
         return;
       }
-      toast.success('Successfully deleted archived workout');
+      toast.success("Successfully deleted archived workout");
       setRefetch(true);
     } catch (error) {
       toast.error("Error while deleting archived workout");
@@ -56,19 +61,24 @@ function ArchivePage() {
   return (
     <DefaultLayout>
       <div className="workoutsWrapper">
-        {workouts.length === 0 && (
+        {loading && <p>Loading...</p>}
+        {!loading && workouts.length === 0 && (
           <h3>There's no history here, why don't you go and workout?</h3>
         )}
-        {workouts.length > 0 &&
-          workouts.map((workout: IWorkout) => workout.endedDate && (
-            <Workout
-              key={workout._id}
-              workout={workout}
-              onDeleteWorkout={(workoutId: string) =>
-                handleDeleteWorkout(workoutId)
-              }
-            />
-          ))}
+        {!loading &&
+          workouts.length > 0 &&
+          workouts.map(
+            (workout: IWorkout) =>
+              workout.endedDate && (
+                <Workout
+                  key={workout._id}
+                  workout={workout}
+                  onDeleteWorkout={(workoutId: string) =>
+                    handleDeleteWorkout(workoutId)
+                  }
+                />
+              )
+          )}
       </div>
     </DefaultLayout>
   );
