@@ -1,9 +1,9 @@
-const API_URL = "http://localhost:3001/workouts";
+import { API_URL } from "..";
 
 // Using the verb POST to create a new Workout
 export const createWorkout = async (name: string, startedDate: number) => {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(`${API_URL}/workouts`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

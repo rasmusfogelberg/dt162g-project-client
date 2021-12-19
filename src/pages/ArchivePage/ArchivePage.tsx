@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
 import "./archive.css";
 
 import Workout, { IWorkout } from "../../components/Workout/Workout";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import { deleteWorkout } from "../../services/deleteWorkout";
-import toast from "react-hot-toast";
+import { API_URL } from "../..";
 
 /*
  * "View" for a all the workouts in the database
  *
  */
 
-const API_URL = "http://localhost:3001/workouts";
-
 const getWorkouts = async () => {
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(`${API_URL}/workouts`);
     const json = await response.json();
     return json;
   } catch (error) {
